@@ -1,4 +1,4 @@
-var startMenuState = new Phaser.Class({
+const startMenuState = new Phaser.Class({
     // Define scene
     Extends: Phaser.Scene,
     initialize:
@@ -12,7 +12,7 @@ var startMenuState = new Phaser.Class({
 
     create: function() {
         console.log("Menu loaded");
-        game.scene.start('Main');
+        game.scene.start('StartMenu');
     },
 
     update: function() {
@@ -20,5 +20,4 @@ var startMenuState = new Phaser.Class({
     }
 });
 
-// Add scene to list of scenes
-socialDistancing.scenes.push(startMenuState);
+export default startMenuState;

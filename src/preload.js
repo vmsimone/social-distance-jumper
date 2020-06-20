@@ -1,20 +1,21 @@
-var preloadState = new Phaser.Class({
+const preloadState = new Phaser.Class({
     Extends: Phaser.Scene,
     initialize: function Preload() {
         Phaser.Scene.call(this, {key: 'Preload'});
     },
+
     preload: function() {
         // Preload images for this state
     },
 
     create: function() {
         console.log("Preload Finished");
-        game.scene.start('StartMenu');
+        game.scene.start('Preload');
     },
+    
     update: function() {
         // Update objects & variables
     }
 });
 
-// Add scene to list of scenes
-socialDistancing.scenes.push(preloadState);
+export default preloadState;
