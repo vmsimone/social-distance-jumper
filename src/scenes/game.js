@@ -121,7 +121,7 @@ export class gameScene extends Phaser.Scene {
 
         scoreCollider = this.physics.add.overlap(scoreZone, peds, addScore, null, this);
         pedCollider = this.physics.add.overlap(player, peds, contact, null, this);
-        cloudCollider = this.physics.add.collider(player, clouds, contact, null, this);
+        cloudCollider = this.physics.add.overlap(player, clouds, contact, null, this);
     }
 
     update() {
@@ -211,16 +211,12 @@ function randomPedNumber() {
     return num;
 }
 
-function contact(player, _ped) {
-    console.log(this.physics.world)
+function contact(player, ped) {
     this.physics.world.removeCollider(pedCollider);
     this.physics.world.removeCollider(cloudCollider);
     this.physics.world.removeCollider(scoreCollider);
-    console.log(this.physics.world)
 
-    //if (this.physics.world.colliders.length == 0) {
-        player.infected = true;
-    //}
+    player.infected = true;
 }
 
 function createWalkingAnim(pedId, anims) {

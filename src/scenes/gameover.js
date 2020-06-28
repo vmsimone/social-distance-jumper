@@ -8,12 +8,9 @@ export class gameOverScene extends Phaser.Scene {
     }
 
     init(data) {
-        console.log(data);
     }
 
     create() {
-        console.log("Game Over");
-
         const bg = this.add.tileSprite(0, 0, this.game.renderer.width, this.game.renderer.height, 'background').setDepth(0);
         const mg = this.add.tileSprite(0, 0, this.game.renderer.width, this.game.renderer.height, 'midground').setDepth(0);
         const fg = this.add.tileSprite(0, 0, this.game.renderer.width, this.game.renderer.height, 'foreground').setDepth(0);
