@@ -4,11 +4,12 @@ let score = 0;
 let scoreText;
 let scoreZone;
 let level = 1;
-let pedSpeed = -600;
+let pedSpeed = -650; //peds move right to left
 let cursors;
-let gameOver;
 let sneezeChance;
 let pedCollider;
+let cloudCollider;
+let scoreCollider;
 
 let bg;
 let mg;
@@ -20,7 +21,7 @@ let peds;
 let ped;
 let newped;
 let newpedNum;
-let virus;
+let clouds;
 let cloud;
 
 //functions below class
@@ -66,11 +67,11 @@ export class gameScene extends Phaser.Scene {
         const firstPed = `ped${randomPedNumber()}`;
         ped = peds.create(1680, 1700, firstPed);
         ped.masked = true;
-        ped.body.setSize(100, 300, true);
-        ped.setVelocityX(-500);
+        ped.body.setSize(100, 280, true);
+        ped.setVelocityX(pedSpeed + 200);
 
         //sets up virus cloud
-        virus = this.physics.add.group();
+        clouds = this.physics.add.group();
 
         scoreText = this.add.text(5, 5, `score: ${score}`, { fontSize: '64px', fill: '#FFF' });
 
@@ -96,7 +97,7 @@ export class gameScene extends Phaser.Scene {
             key: 'falling',
             frames: this.anims.generateFrameNumbers('player', { start: 13, end: 15 }),
             frameRate: 5,
-            repeat: -1
+            repeat: 1
         });
 
         this.anims.create({
@@ -108,27 +109,28 @@ export class gameScene extends Phaser.Scene {
 
         this.anims.create({
             key: 'gg',
-            frames: this.anims.generateFrameNumbers('player', { start: 17, end: 23 }),
+            frames: this.anims.generateFrameNumbers('player', { start: 18, end: 23 }),
             frameRate: 4
         });
 
         ped.anims.play('walking1');
-        // cloud.anims.play('virusCloud');
 
         this.physics.add.collider(scoreZone, ground);
         this.physics.add.collider(player, ground);
         this.physics.add.collider(peds, ground);
 
-        this.physics.add.overlap(scoreZone, peds, addScore, null, this);
+        scoreCollider = this.physics.add.overlap(scoreZone, peds, addScore, null, this);
         pedCollider = this.physics.add.overlap(player, peds, contact, null, this);
-        this.physics.add.collider(player, virus, contact, null, this);
+        cloudCollider = this.physics.add.collider(player, clouds, contact, null, this);
     }
 
     update() {
-        if (player.infected === true /*&& player.body.touching.down*/) {
+        if (player.infected === true) {
             player.anims.play('gg', true);
-            this.physics.pause();
-            this.scene.start(GLOBALS.SCENES.GAMEOVER, "GAME OVER");
+            let animOver = player.anims.getProgress();
+            if(animOver == 1) {
+                runGameOver(this.scene);
+            }
         } else {
             if (player.body.touching.down === false) {
                 player.anims.play('falling');
@@ -143,15 +145,16 @@ export class gameScene extends Phaser.Scene {
             
             sneezeChance = rollRandomNumber();
             if(sneezeChance > 990) {
-                pedSneeze(ped);
-                if(newped) {
+                if(ped) {
+                    pedSneeze(ped);
+                } else if(newped) {
                     pedSneeze(newped);
                 }
             }
       
             if(score / 100 == level) {
                 level++;
-                console.log(level);
+                pedSpeed -= 100
             }
       
             bg.tilePositionX += 0.5;
@@ -166,16 +169,19 @@ function rollRandomNumber() {
 }
 
 function pedSneeze(ped) {
-    if(ped.masked == null) {
-        console.log(ped);
-        cloud = virus.create(ped.x, ped.y, 'virus');
+    const thisPedSpeed = ped.body.velocity.x;
+
+    if (ped.masked == null) {
+        cloud = clouds.create(ped.x, ped.y + 100, 'cloud');
         cloud.body.setSize(150, 100, true);
-        cloud.setVelocityX(-700);
+        cloud.setVelocityX(thisPedSpeed - 200);
+        cloud.anims.play('virusCloud');
     } else {
-        console.log(ped);
-        cloud = virus.create(ped.x, ped.y, 'virus');
+        cloud = clouds.create(ped.x + 50, ped.y + 100, 'cloud');
         cloud.body.setSize(150, 100, true);
-        cloud.setVelocityY(0);
+        cloud.body.setAllowGravity(false);
+        cloud.setVelocityX(thisPedSpeed);
+        cloud.anims.play('virusCloud');
     }
 }
 
@@ -188,7 +194,7 @@ function addScore(_scoreZone, ped) {
   
         newped = peds.create(1680, 1900, `ped${newpedNum}`);
         newped.setVelocityX(
-            Phaser.Math.Between(-450, -800)
+            Phaser.Math.Between((pedSpeed - 200), (pedSpeed + 200))
         );
         newped.body.setSize(100, 300, true);
         if(newpedNum <= 12) {
@@ -206,10 +212,15 @@ function randomPedNumber() {
 }
 
 function contact(player, _ped) {
-    player.infected = true;
-    // if(pedCollider) {
-    //     pedCollider.destroy();
-    // }
+    console.log(this.physics.world)
+    this.physics.world.removeCollider(pedCollider);
+    this.physics.world.removeCollider(cloudCollider);
+    this.physics.world.removeCollider(scoreCollider);
+    console.log(this.physics.world)
+
+    //if (this.physics.world.colliders.length == 0) {
+        player.infected = true;
+    //}
 }
 
 function createWalkingAnim(pedId, anims) {
@@ -219,4 +230,13 @@ function createWalkingAnim(pedId, anims) {
         frameRate: 8,
         repeat: -1
     }
+}
+
+function testAnim(arg) {
+    console.log(arg);
+    return;
+}
+
+function runGameOver(scene) {
+    scene.start(GLOBALS.SCENES.GAMEOVER, "GAME OVER")
 }

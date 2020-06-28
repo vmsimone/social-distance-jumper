@@ -42,7 +42,7 @@ import ped23Asset from "../assets/sprites/Maskless White Female 3.png";
 import ped24Asset from "../assets/sprites/Maskless Muscular White Male.png";
 import ped25Asset from "../assets/sprites/Maskless Bauldric.png";
 
-import virusAsset from "../assets/sprites/cloud.png";
+import cloudAsset from "../assets/sprites/cloud.png";
 import droneAsset from "../assets/sprites/drone.png";
 
 export class preloadScene extends Phaser.Scene {
@@ -73,8 +73,8 @@ export class preloadScene extends Phaser.Scene {
         );
 
         this.load.spritesheet(
-          'virus', 
-          virusAsset,
+          'cloud', 
+          cloudAsset,
           { frameWidth: 192, frameHeight: 192 }
         );
 
