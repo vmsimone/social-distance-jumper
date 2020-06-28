@@ -7,12 +7,12 @@ import { gameOverScene } from "./scenes/gameover";
 
 let game = new Phaser.Game({
   type: Phaser.AUTO,
-  width: 287,
-  height: 208,
+  width: 1680,
+  height: 1920,
   physics: {
       default: 'arcade',
       arcade: {
-          gravity: { y: 500 },
+          gravity: { y: 2500 },
           debug: true
       }
   },
@@ -23,7 +23,7 @@ let game = new Phaser.Game({
     gameOverScene
   ],
   pixelArt: true,
-  zoom: 4
+  zoom: 0.4
 });
 
 function restartGame() {
