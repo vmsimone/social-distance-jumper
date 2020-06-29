@@ -2,16 +2,24 @@ import { GLOBALS } from "../globals.js";
 
 
 //background and game elements
-import bgAsset from "../assets/Background/Background.png";
-import mgAsset from "../assets/Background/Midground.png";
-import fgAsset from "../assets/Background/Foreground.png";
+import bgAsset from "../assets/background/background.png";
+import mgAsset from "../assets/background/midground.png";
+import fgAsset from "../assets/background/foreground.png";
 import groundAsset from "../assets/ground.png";
-import titleAsset from "../assets/UI/Logo V1.png";
-import playButtonAsset from "../assets/UI/Start Button.png";
-import scoreButtonAsset from "../assets/UI/Score Button.png";
 import scoreZoneAsset from "../assets/score-zone.png";
-import gameOverAsset from "../assets/UI/Game Over V1.png";
-import restartButtonAsset from "../assets/UI/Restart Button.png";
+
+import screenDarkenAsset from "../assets/ui/Screen Darkening Layer.png";
+import titleAsset from "../assets/ui/Logo V2.png";
+import playButtonAsset from "../assets/ui/Start Button.png";
+import scoreButtonAsset from "../assets/ui/Score Button.png";
+
+import getReadyAsset from "../assets/ui/Get Ready.png";
+import instructionsAsset from "../assets/ui/Tap To Jump.png";
+
+import scoreBoardAsset from "../assets/ui/Score_Best.png";
+import gameOverAsset from "../assets/ui/Game Over V1.png";
+import restartButtonAsset from "../assets/ui/Restart Button.png";
+import shareButtonAsset from "../assets/ui/Share Button.png";
 
 //characters and obstacles
 import playerAsset from "../assets/sprites/Player.png";
@@ -58,12 +66,20 @@ export class preloadScene extends Phaser.Scene {
         this.load.image('midground', mgAsset);
         this.load.image('foreground', fgAsset);
         this.load.image('ground', groundAsset);
+        this.load.image('scoreZone', scoreZoneAsset);
+        
+        this.load.image('screenDarken', screenDarkenAsset);
         this.load.image('title', titleAsset);
         this.load.image('playButton', playButtonAsset);
         this.load.image('scoreButton', scoreButtonAsset);
-        this.load.image('scoreZone', scoreZoneAsset);
+
+        this.load.image('getReady', getReadyAsset);
+        this.load.image('instructions', instructionsAsset);
+
+        this.load.image('scoreBoard', scoreBoardAsset);
         this.load.image('gameOverTitle', gameOverAsset);
         this.load.image('restartButton', restartButtonAsset);
+        this.load.image('shareButton', shareButtonAsset);
 
         //player and obstacles
         this.load.spritesheet(
@@ -105,6 +121,31 @@ export class preloadScene extends Phaser.Scene {
         this.load.spritesheet('ped24', ped24Asset, { frameWidth: 384, frameHeight: 384 });
         this.load.spritesheet('ped25', ped25Asset, { frameWidth: 384, frameHeight: 384 });
 
+        this.load.audio('music', [ 
+            "src/assets/audio/Retro City Loop.mp3", 
+            "src/assets/audio/Retro City Loop.wav"
+        ]);
+        this.load.audio('startSound', [ 
+            "src/assets/audio/Start.mp3", 
+            null
+        ]);
+        this.load.audio('jumpSound', [ 
+            "src/assets/audio/Jump.mp3", 
+            null
+        ]);
+        this.load.audio('sneezeSound', [ 
+            "src/assets/audio/Sneeze.mp3", 
+            null
+        ]);
+        this.load.audio('coughSound', [ 
+            "src/assets/audio/Cough.mp3", 
+            null
+        ]);
+        this.load.audio('gameOverSound', [ 
+            "src/assets/audio/Game Over.mp3", 
+            null
+        ]);
+
         let loadingBar = this.add.graphics({
             fillStyle: {
                 color: 0xaaffff
@@ -113,7 +154,7 @@ export class preloadScene extends Phaser.Scene {
 
         this.load.on("progress", (percent) => {
             loadingBar.fillRect(0, this.game.renderer.height / 2, this.game.renderer.width * percent, 50);
-        })
+        });
     }
 
     create() {

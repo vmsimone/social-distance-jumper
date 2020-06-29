@@ -1,10 +1,11 @@
 import { GLOBALS } from "../globals.js";
 
-let score = 0;
+let highScore;
+let score;
 let scoreText;
 let scoreZone;
-let level = 1;
-let pedSpeed = -650; //peds move right to left
+let level;
+let pedSpeed; //peds move right to left
 let cursors;
 let sneezeChance;
 let pedCollider;
@@ -24,6 +25,11 @@ let newpedNum;
 let clouds;
 let cloud;
 
+let jumpSFX;
+let coughSFX;
+let sneezeSFX;
+let gameOverSFX;
+
 //functions below class
 export class gameScene extends Phaser.Scene {
     constructor() {
@@ -32,12 +38,19 @@ export class gameScene extends Phaser.Scene {
         });
     }
 
-    init(data) {
-        console.log(data);
+    init(gameData) {
+        if(gameData.highScore) {
+            highScore = gameData.highScore;
+        } else {
+            highScore = "00";
+        }
+
+        score = 0;
+        level = 1;
+        pedSpeed = -650;
     }
 
     create() {
-        console.log("Game Created");
         cursors = this.input.keyboard.createCursorKeys();
 
         //create the background
@@ -56,6 +69,12 @@ export class gameScene extends Phaser.Scene {
         //invisible to the player, but adds points when touched by ped
         scoreZone = this.physics.add.sprite(200, 1700, 'scoreZone');
 
+        //sounds
+        jumpSFX = this.sound.add('jumpSound');
+        sneezeSFX = this.sound.add('sneezeSound');
+        coughSFX = this.sound.add('coughSound');
+        gameOverSFX = this.sound.add('gameOverSound');
+
         //sets up player properties
         player = this.physics.add.sprite(200, 1700, 'player');
         player.setCollideWorldBounds(true);
@@ -73,7 +92,8 @@ export class gameScene extends Phaser.Scene {
         //sets up virus cloud
         clouds = this.physics.add.group();
 
-        scoreText = this.add.text(5, 5, `score: ${score}`, { fontSize: '64px', fill: '#FFF' });
+        scoreText = this.add.text(10, 10, `score: ${score}`, { fontFamily: "dogicapixel", fontSize: '64px', fill: '#FFF' });
+        score = 0;
 
         //pedestrian walking animations
         for(let i=1; i<=25; i++) {
@@ -140,15 +160,24 @@ export class gameScene extends Phaser.Scene {
             }
       
             if (cursors.up.isDown && player.body.touching.down) {
+                jumpSFX.play();
                 player.setVelocityY(-1600);
             }
             
             sneezeChance = rollRandomNumber();
-            if(sneezeChance > 990) {
-                if(ped) {
+            if(sneezeChance > 985) {
+                if(ped && ped.body) {
                     pedSneeze(ped);
-                } else if(newped) {
+                } 
+                if(newped && newped.body) {
                     pedSneeze(newped);
+                }
+            } else if(sneezeChance < 30) {
+                if(ped && ped.body) {
+                    pedCough(ped);
+                } 
+                if(newped && newped.body) {
+                    pedCough(newped);
                 }
             }
       
@@ -169,12 +198,31 @@ function rollRandomNumber() {
 }
 
 function pedSneeze(ped) {
-    const thisPedSpeed = ped.body.velocity.x;
+    const thisPedSpeed = ped.body.velocity.x || 0;
+    sneezeSFX.play();
+    
+    if (ped.masked == null) {
+        cloud = clouds.create(ped.x, ped.y + 100, 'cloud');
+        cloud.body.setSize(150, 100, true);
+        cloud.setVelocityX(thisPedSpeed - 300);
+        cloud.anims.play('virusCloud');
+    } else {
+        cloud = clouds.create(ped.x + 50, ped.y + 100, 'cloud');
+        cloud.body.setSize(150, 100, true);
+        cloud.body.setAllowGravity(false);
+        cloud.setVelocityX(thisPedSpeed);
+        cloud.anims.play('virusCloud');
+    }
+}
+
+function pedCough(ped) {
+    const thisPedSpeed = ped.body.velocity.x || 0;
+    coughSFX.play();
 
     if (ped.masked == null) {
         cloud = clouds.create(ped.x, ped.y + 100, 'cloud');
         cloud.body.setSize(150, 100, true);
-        cloud.setVelocityX(thisPedSpeed - 200);
+        cloud.setVelocityX(thisPedSpeed - 100);
         cloud.anims.play('virusCloud');
     } else {
         cloud = clouds.create(ped.x + 50, ped.y + 100, 'cloud');
@@ -211,10 +259,12 @@ function randomPedNumber() {
     return num;
 }
 
-function contact(player, ped) {
+function contact(player, _ped) {
     this.physics.world.removeCollider(pedCollider);
     this.physics.world.removeCollider(cloudCollider);
     this.physics.world.removeCollider(scoreCollider);
+
+    gameOverSFX.play();
 
     player.infected = true;
 }
@@ -234,5 +284,8 @@ function testAnim(arg) {
 }
 
 function runGameOver(scene) {
-    scene.start(GLOBALS.SCENES.GAMEOVER, "GAME OVER")
+    if (score == 0) {
+        score = "00";
+    }
+    scene.start(GLOBALS.SCENES.GAMEOVER, { "gameScore": score, "highScore": highScore });
 }

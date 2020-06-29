@@ -7,13 +7,13 @@ import { gameOverScene } from "./scenes/gameover";
 
 let game = new Phaser.Game({
   type: Phaser.AUTO,
-  width: 1680,
+  width: 1080,
   height: 1920,
   physics: {
       default: 'arcade',
       arcade: {
           gravity: { y: 2500 },
-          debug: true
+          debug: false
       }
   },
   scene: [
