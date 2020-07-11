@@ -1,5 +1,10 @@
 import { GLOBALS } from "../globals.js";
 
+let gameWidth;
+let gameHeight;
+let gameHeightScale;
+let gameWidthScale;
+
 let highScore;
 let score;
 let scoreText;
@@ -7,6 +12,7 @@ let scoreZone;
 let level;
 let pedSpeed; //peds move right to left
 let cursors;
+let pointer;
 let sneezeChance;
 let pedCollider;
 let cloudCollider;
@@ -24,6 +30,8 @@ let newped;
 let newpedNum;
 let clouds;
 let cloud;
+let hitBoxHeight;
+let hitBoxWidth;
 
 let jumpSFX;
 let coughSFX;
@@ -44,30 +52,40 @@ export class gameScene extends Phaser.Scene {
         } else {
             highScore = "00";
         }
+        
+        //this will help us organize better
+        gameWidth = this.game.renderer.width;
+        gameHeight = this.game.renderer.height;
+
+        //images all scaled to fit 1080 x 1920
+        gameWidthScale = gameWidth / 1080;
+        gameHeightScale = gameHeight / 1920;
 
         score = 0;
         level = 1;
-        pedSpeed = -650;
+
+        pedSpeed = gameWidth * -0.5;
     }
 
     create() {
         cursors = this.input.keyboard.createCursorKeys();
+        pointer = this.input.activePointer;
 
         //create the background
-        bg = this.add.tileSprite(0, 0, this.game.renderer.width, this.game.renderer.height, 'background').setDepth(0);
-        mg = this.add.tileSprite(0, 0, this.game.renderer.width, this.game.renderer.height, 'midground').setDepth(0);
-        fg = this.add.tileSprite(0, 0, this.game.renderer.width, this.game.renderer.height, 'foreground').setDepth(0);
+        bg = this.add.tileSprite(0, 0, 6080, 1920, 'background').setDepth(0);
+        mg = this.add.tileSprite(0, 0, 6080, 1920, 'midground').setDepth(0);
+        fg = this.add.tileSprite(0, 0, 6080, 1920, 'foreground').setDepth(0);
 
-        bg.setOrigin(0);
-        mg.setOrigin(0);
-        fg.setOrigin(0);
+        bg.setOrigin(0).setScale(gameHeightScale);
+        mg.setOrigin(0).setScale(gameHeightScale);
+        fg.setOrigin(0).setScale(gameHeightScale);
 
         //floor to run on
         ground = this.physics.add.staticGroup();
-        ground.create(840, 1900, 'ground').refreshBody();
+        ground.create((gameWidth * 0.5), (gameHeight - 15), 'ground').refreshBody();
         
         //invisible to the player, but adds points when touched by ped
-        scoreZone = this.physics.add.sprite(200, 1700, 'scoreZone');
+        scoreZone = this.physics.add.sprite((gameWidthScale * 150), (gameHeight - 200), 'scoreZone').setScale(gameHeightScale);
 
         //sounds
         jumpSFX = this.sound.add('jumpSound');
@@ -76,23 +94,35 @@ export class gameScene extends Phaser.Scene {
         gameOverSFX = this.sound.add('gameOverSound');
 
         //sets up player properties
-        player = this.physics.add.sprite(200, 1700, 'player');
+        player = this.physics.add.sprite((gameWidthScale * 150), (gameHeight - 100), 'player');
         player.setCollideWorldBounds(true);
-        player.body.setSize(100, 300, true);
+        player.setScale(gameHeightScale);
+
+        //sprite "boxes" are larger than the sprite, so we resize them
+        hitBoxHeight = player.body.height * 0.7;
+        hitBoxWidth = player.body.width * 0.25;
+
+        player.body.setSize(hitBoxWidth, hitBoxHeight, true);
 
         //sets up peds group and creates first one
         peds = this.physics.add.group();
 
         const firstPed = `ped${randomPedNumber()}`;
-        ped = peds.create(1680, 1700, firstPed);
+        ped = peds.create((gameWidth + 200), (gameHeight - 100), firstPed);
+        ped.setScale(gameHeightScale);
         ped.masked = true;
-        ped.body.setSize(100, 280, true);
-        ped.setVelocityX(pedSpeed + 200);
+        ped.body.setSize(hitBoxWidth, hitBoxHeight, true);
+        ped.setVelocityX(pedSpeed);
 
         //sets up virus cloud
         clouds = this.physics.add.group();
 
-        scoreText = this.add.text(10, 10, `score: ${score}`, { fontFamily: "dogicapixel", fontSize: '64px', fill: '#FFF' });
+        scoreText = this.add.text(
+            10, 
+            10, 
+            `score: ${score}`, 
+            { fontFamily: "dogicapixel", fontSize: '64px', fill: '#FFF' }
+        ).setScale(gameHeightScale);
         score = 0;
 
         //pedestrian walking animations
@@ -159,9 +189,9 @@ export class gameScene extends Phaser.Scene {
                 player.anims.play('running', true);
             }
       
-            if (cursors.up.isDown && player.body.touching.down) {
+            if ((cursors.up.isDown || pointer.isDown) && player.body.touching.down) {
                 jumpSFX.play();
-                player.setVelocityY(-1600);
+                player.setVelocityY(gameHeight * -0.7);
             }
             
             sneezeChance = rollRandomNumber();
@@ -199,15 +229,20 @@ function rollRandomNumber() {
 
 function pedSneeze(ped) {
     const thisPedSpeed = ped.body.velocity.x || 0;
+    const pedPositionX = ped.x + (ped.displayOriginX / 2);
     sneezeSFX.play();
     
     if (ped.masked == null) {
-        cloud = clouds.create(ped.x, ped.y + 100, 'cloud');
+        cloud = clouds.create(pedPositionX, ped.y + 75, 'cloud');
+        cloud.setScale(gameHeightScale);
+
         cloud.body.setSize(150, 100, true);
-        cloud.setVelocityX(thisPedSpeed - 300);
+        cloud.setVelocityX(thisPedSpeed - 150);
         cloud.anims.play('virusCloud');
     } else {
-        cloud = clouds.create(ped.x + 50, ped.y + 100, 'cloud');
+        cloud = clouds.create(pedPositionX, ped.y + 75, 'cloud');
+        cloud.setScale(gameHeightScale);
+
         cloud.body.setSize(150, 100, true);
         cloud.body.setAllowGravity(false);
         cloud.setVelocityX(thisPedSpeed);
@@ -217,15 +252,20 @@ function pedSneeze(ped) {
 
 function pedCough(ped) {
     const thisPedSpeed = ped.body.velocity.x || 0;
+    const pedPositionX = ped.x + (ped.displayOriginX / 2);
     coughSFX.play();
 
     if (ped.masked == null) {
-        cloud = clouds.create(ped.x, ped.y + 100, 'cloud');
+        cloud = clouds.create(pedPositionX, ped.y + 75, 'cloud');
+        cloud.setScale(gameHeightScale);
+
         cloud.body.setSize(150, 100, true);
         cloud.setVelocityX(thisPedSpeed - 100);
         cloud.anims.play('virusCloud');
     } else {
-        cloud = clouds.create(ped.x + 50, ped.y + 100, 'cloud');
+        cloud = clouds.create(pedPositionX, ped.y + 75, 'cloud');
+        cloud.setScale(gameHeightScale);
+
         cloud.body.setSize(150, 100, true);
         cloud.body.setAllowGravity(false);
         cloud.setVelocityX(thisPedSpeed);
@@ -239,10 +279,12 @@ function addScore(_scoreZone, ped) {
         scoreText.setText(`score: ${score}`);
   
         newpedNum = randomPedNumber();
-  
-        newped = peds.create(1680, 1900, `ped${newpedNum}`);
+
+        newped = peds.create((gameWidth + 250), (gameHeight + (hitBoxHeight / 3)), `ped${newpedNum}`);
+        newped.setScale(gameHeightScale);
+
         newped.setVelocityX(
-            Phaser.Math.Between((pedSpeed - 200), (pedSpeed + 200))
+            Phaser.Math.Between((pedSpeed - 10), (pedSpeed + 10))
         );
         newped.body.setSize(100, 300, true);
         if(newpedNum <= 12) {
@@ -276,11 +318,6 @@ function createWalkingAnim(pedId, anims) {
         frameRate: 8,
         repeat: -1
     }
-}
-
-function testAnim(arg) {
-    console.log(arg);
-    return;
 }
 
 function runGameOver(scene) {

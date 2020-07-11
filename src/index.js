@@ -7,13 +7,13 @@ import { gameOverScene } from "./scenes/gameover";
 
 let game = new Phaser.Game({
   type: Phaser.AUTO,
-  width: 1080,
-  height: 1920,
+  width: (window.innerWidth * window.devicePixelRatio),
+  height: (window.innerHeight * window.devicePixelRatio),
   physics: {
       default: 'arcade',
       arcade: {
-          gravity: { y: 2500 },
-          debug: false
+          gravity: { y: window.innerHeight },
+          debug: true
       }
   },
   scene: [
@@ -22,12 +22,5 @@ let game = new Phaser.Game({
     gameScene,
     gameOverScene
   ],
-  pixelArt: true,
-  zoom: 0.4
+  pixelArt: true
 });
-
-function restartGame() {
-  gameOver = false;
-  score = 0;
-  player.setTint(0x000000);
-}

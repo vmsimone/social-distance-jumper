@@ -1,5 +1,9 @@
 import { GLOBALS } from "../globals.js";
 
+let gameWidth;
+let gameHeight;
+let gameHeightScale;
+
 let gameScore;
 let gameScoreText;
 let highScore;
@@ -19,52 +23,57 @@ export class gameOverScene extends Phaser.Scene {
     }
 
     create() {
-        const bg = this.add.tileSprite(0, 0, this.game.renderer.width, this.game.renderer.height, 'background').setDepth(0);
-        const mg = this.add.tileSprite(0, 0, this.game.renderer.width, this.game.renderer.height, 'midground').setDepth(0);
-        const fg = this.add.tileSprite(0, 0, this.game.renderer.width, this.game.renderer.height, 'foreground').setDepth(0);
+        //this will help us organize better
+        gameWidth = this.game.renderer.width;
+        gameHeight = this.game.renderer.height;
 
-        bg.setOrigin(0);
-        mg.setOrigin(0);
-        fg.setOrigin(0);
+        //images all scaled to fit 1080 x 1920
+        gameHeightScale = gameHeight / 1920;
+
+        const bg = this.add.tileSprite(0, 0, 6080, 1920, 'background').setDepth(0);
+        const mg = this.add.tileSprite(0, 0, 6080, 1920, 'midground').setDepth(0);
+        const fg = this.add.tileSprite(0, 0, 6080, 1920, 'foreground').setDepth(0);
+
+        bg.setOrigin(0).setScale(gameHeightScale);
+        mg.setOrigin(0).setScale(gameHeightScale);
+        fg.setOrigin(0).setScale(gameHeightScale);
         
-        this.add.image(0, 0, "screenDarken").setDepth(1).setOrigin(0);
+        this.add.image(0, 0, "screenDarken").setDepth(1).setOrigin(0).setScale(gameHeightScale);
 
-        let ground = this.physics.add.staticGroup();
-        ground.create(840, 1900, 'ground').refreshBody();
-
-        this.add.image(
-            this.game.renderer.width * 0.2, 
-            this.game.renderer.height * 0.1, 
+        let scoreBoard = this.add.image(
+            gameWidth * 0.5, 
+            gameHeight * 0.2, 
             "scoreBoard"
-        ).setDepth(1).setOrigin(0);
+        ).setDepth(1).setScale(gameHeightScale);
+
+        console.log(scoreBoard);
         
         gameScoreText = this.add.text(
-            this.game.renderer.width * 0.28, 
-            this.game.renderer.height * 0.17, 
+            scoreBoard.x * 0.72, 
+            scoreBoard.y,
             `${gameScore}`, 
             { fontFamily: "dogicapixel", fontSize: '64px', fill: '#00CCFF' }
-        ).setDepth(1).setOrigin(0);
+        ).setDepth(1).setScale(gameHeightScale);
 
         highScoreText = this.add.text(
-            this.game.renderer.width * 0.55, 
-            this.game.renderer.height * 0.17, 
+            scoreBoard.x * 1.12, 
+            scoreBoard.y,
             `${updateHighscore()}`, 
             { fontFamily: "dogicapixel", fontSize: '64px', fill: '#00CCFF' }
-        ).setDepth(1).setOrigin(0);
+        ).setDepth(1).setScale(gameHeightScale);
 
         this.add.image(
-            this.game.renderer.width * 0.25, 
-            this.game.renderer.height * 0.4, 
+            gameWidth * 0.5, 
+            gameHeight * 0.5, 
             "gameOverTitle"
-        ).setDepth(1).setOrigin(0);
+        ).setDepth(1).setScale(gameHeightScale);
 
         const restartButton = this.add.image(
-            this.game.renderer.width * 0.3, 
-            this.game.renderer.height * 0.8, 
+            gameWidth * 0.5, 
+            gameHeight * 0.85,
             "restartButton"
-        ).setDepth(1);
+        ).setDepth(1).setScale(gameHeightScale);
 
-        restartButton.setOrigin(0);
         restartButton.setInteractive();
         restartButton.on("pointerdown", () => {
             this.sound.add('startSound').play();
