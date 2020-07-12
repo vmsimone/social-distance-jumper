@@ -89,8 +89,8 @@ export class gameScene extends Phaser.Scene {
 
         //sounds
         jumpSFX = this.sound.add('jumpSound');
-        sneezeSFX = this.sound.add('sneezeSound');
-        coughSFX = this.sound.add('coughSound');
+        // sneezeSFX = this.sound.add('sneezeSound');
+        // coughSFX = this.sound.add('coughSound');
         gameOverSFX = this.sound.add('gameOverSound');
 
         //sets up player properties
@@ -230,7 +230,7 @@ function rollRandomNumber() {
 function pedSneeze(ped) {
     const thisPedSpeed = ped.body.velocity.x || 0;
     const pedPositionX = ped.x + (ped.displayOriginX / 2);
-    sneezeSFX.play();
+    //sneezeSFX.play();
     
     if (ped.masked == null) {
         cloud = clouds.create(pedPositionX, ped.y + 75, 'cloud');
@@ -253,7 +253,7 @@ function pedSneeze(ped) {
 function pedCough(ped) {
     const thisPedSpeed = ped.body.velocity.x || 0;
     const pedPositionX = ped.x + (ped.displayOriginX / 2);
-    coughSFX.play();
+    //coughSFX.play();
 
     if (ped.masked == null) {
         cloud = clouds.create(pedPositionX, ped.y + 75, 'cloud');
