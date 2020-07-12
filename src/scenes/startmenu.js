@@ -68,6 +68,6 @@ export class startMenuScene extends Phaser.Scene {
         // //     this.scene.start(GLOBALS.SCENES.SCORE, "Scores");
         // // });
 
-        this.sound.add('music').play();
+        this.sound.add('music', {loop: true}).play();
     }
 };

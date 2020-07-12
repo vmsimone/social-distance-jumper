@@ -126,24 +126,24 @@ export class preloadScene extends Phaser.Scene {
             "src/assets/audio/Retro City Loop.wav"
         ]);
         this.load.audio('startSound', [ 
-            "src/assets/audio/Start.mp3", 
-            null
+            "src/assets/audio/Start.mp3",
+            "src/assets/audio/Start.ogg"
         ]);
         this.load.audio('jumpSound', [ 
-            "src/assets/audio/Jump.mp3", 
-            null
+            "src/assets/audio/Jump.mp3",
+            "src/assets/audio/Jump.ogg"
         ]);
         this.load.audio('sneezeSound', [ 
-            "src/assets/audio/Sneeze.mp3", 
-            null
+            "src/assets/audio/Sneeze.mp3",
+            "src/assets/audio/Sneeze.ogg"
         ]);
         this.load.audio('coughSound', [ 
             "src/assets/audio/Cough.mp3", 
-            null
+            "src/assets/audio/Cough.ogg"
         ]);
         this.load.audio('gameOverSound', [ 
-            "src/assets/audio/Game Over.mp3", 
-            null
+            "src/assets/audio/Game Over.mp3",
+            "src/assets/audio/Game Over.ogg"
         ]);
 
         let loadingBar = this.add.graphics({
