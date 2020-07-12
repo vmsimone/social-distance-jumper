@@ -49,7 +49,7 @@ export class gameOverScene extends Phaser.Scene {
         console.log(scoreBoard);
         
         gameScoreText = this.add.text(
-            scoreBoard.x * 0.72, 
+            scoreBoard.x * 0.8, 
             scoreBoard.y,
             `${gameScore}`, 
             { fontFamily: "dogicapixel", fontSize: '64px', fill: '#00CCFF' }

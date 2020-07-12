@@ -50,7 +50,7 @@ export class gameScene extends Phaser.Scene {
         if(gameData.highScore) {
             highScore = gameData.highScore;
         } else {
-            highScore = "00";
+            highScore = 0;
         }
         
         //this will help us organize better
@@ -211,7 +211,7 @@ export class gameScene extends Phaser.Scene {
                 }
             }
       
-            if(score / 100 == level) {
+            if(score / 10 == level) {
                 level++;
                 pedSpeed -= 100
             }
@@ -275,7 +275,7 @@ function pedCough(ped) {
 
 function addScore(_scoreZone, ped) {
     if (ped.scored == undefined) {
-        score += 10;
+        score += 1;
         scoreText.setText(`score: ${score}`);
   
         newpedNum = randomPedNumber();
@@ -321,8 +321,5 @@ function createWalkingAnim(pedId, anims) {
 }
 
 function runGameOver(scene) {
-    if (score == 0) {
-        score = "00";
-    }
     scene.start(GLOBALS.SCENES.GAMEOVER, { "gameScore": score, "highScore": highScore });
 }

@@ -7,8 +7,14 @@ import { gameOverScene } from "./scenes/gameover";
 
 let game = new Phaser.Game({
   type: Phaser.AUTO,
-  width: (window.innerWidth * window.devicePixelRatio),
-  height: (window.innerHeight * window.devicePixelRatio),
+  //the game should always be vertical or square
+  width: returnLowest(
+    returnLowest(screenBuffer(window.innerWidth), screenBuffer(window.innerHeight)),
+    //max width is 1080
+    1080
+  ),
+  //max height is 1920
+  height: returnLowest(screenBuffer(window.innerHeight), 1920),
   physics: {
       default: 'arcade',
       arcade: {
@@ -24,3 +30,15 @@ let game = new Phaser.Game({
   ],
   pixelArt: true
 });
+
+function returnLowest(a, b) {
+  if (a < b) {
+    return a;
+  } else {
+    return b;
+  }
+}
+
+function screenBuffer(windowSize) {
+  return (windowSize * 0.95)
+}

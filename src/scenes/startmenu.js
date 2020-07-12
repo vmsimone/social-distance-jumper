@@ -45,7 +45,7 @@ export class startMenuScene extends Phaser.Scene {
 
         //click to start
         const playButton = this.add.image(
-            gameWidth * 0.3, 
+            gameWidth * 0.5, 
             gameHeight * 0.85, 
             "playButton"
         ).setDepth(1).setScale(gameHeightScale);
@@ -57,16 +57,16 @@ export class startMenuScene extends Phaser.Scene {
         });
 
         //this button does nothing atm
-        const scoreButton = this.add.image(
-            gameWidth * 0.7, 
-            gameHeight * 0.85, 
-            "scoreButton"
-        ).setDepth(1).setScale(gameHeightScale);
+        // const scoreButton = this.add.image(
+        //     gameWidth * 0.7, 
+        //     gameHeight * 0.85, 
+        //     "scoreButton"
+        // ).setDepth(1).setScale(gameHeightScale);
 
-        scoreButton.setInteractive();
-        // scoreButton.on("pointerdown", () => {
-        //     this.scene.start(GLOBALS.SCENES.SCORE, "Scores");
-        // });
+        // scoreButton.setInteractive();
+        // // scoreButton.on("pointerdown", () => {
+        // //     this.scene.start(GLOBALS.SCENES.SCORE, "Scores");
+        // // });
 
         this.sound.add('music').play();
     }
