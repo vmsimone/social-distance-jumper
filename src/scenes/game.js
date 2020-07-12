@@ -189,9 +189,9 @@ export class gameScene extends Phaser.Scene {
                 player.anims.play('running', true);
             }
       
-            if ((cursors.up.isDown || pointer.isDown) && player.body.touching.down) {
+            if ((cursors.space.isDown || cursors.up.isDown || pointer.isDown) && player.body.touching.down) {
                 jumpSFX.play();
-                player.setVelocityY(gameHeight * -0.7);
+                player.setVelocityY(gameHeight * -1);
             }
             
             sneezeChance = rollRandomNumber();

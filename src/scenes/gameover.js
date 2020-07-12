@@ -52,14 +52,14 @@ export class gameOverScene extends Phaser.Scene {
             scoreBoard.x * 0.8, 
             scoreBoard.y,
             `${gameScore}`, 
-            { fontFamily: "dogicapixel", fontSize: '64px', fill: '#00CCFF' }
+            { fontFamily: "dogicapixel", fontSize: '64px', fill: '#FFFF00' }
         ).setDepth(1).setScale(gameHeightScale);
 
         highScoreText = this.add.text(
             scoreBoard.x * 1.12, 
             scoreBoard.y,
             `${updateHighscore()}`, 
-            { fontFamily: "dogicapixel", fontSize: '64px', fill: '#00CCFF' }
+            { fontFamily: "dogicapixel", fontSize: '64px', fill: '#FFFF00' }
         ).setDepth(1).setScale(gameHeightScale);
 
         this.add.image(
