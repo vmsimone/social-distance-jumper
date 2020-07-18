@@ -4,10 +4,10 @@ let gameWidth;
 let gameHeight;
 let gameHeightScale;
 
-export class startMenuScene extends Phaser.Scene {
+export class getReadyScene extends Phaser.Scene {
     constructor() {
         super({
-            key: GLOBALS.SCENES.STARTMENU
+            key: GLOBALS.SCENES.GETREADY
         });
     }
 
@@ -32,42 +32,23 @@ export class startMenuScene extends Phaser.Scene {
         mg.setOrigin(0).setScale(gameHeightScale);
         fg.setOrigin(0).setScale(gameHeightScale);
 
-        this.add.image(0, 0, "screenDarken").setDepth(1).setOrigin(0).setScale(gameHeightScale);
-        
-        let ground = this.physics.add.staticGroup();
-        ground.create(840, 1900, 'ground').refreshBody();
-
         this.add.image(
             gameWidth * 0.5, 
             gameHeight * 0.25, 
-            "title"
+            "getReady"
         ).setDepth(1).setScale(gameHeightScale);
-
-        //click to start
-        const playButton = this.add.image(
+        
+        this.add.image(
             gameWidth * 0.5, 
             gameHeight * 0.85, 
-            "playButton"
+            "instructions"
         ).setDepth(1).setScale(gameHeightScale);
 
-        playButton.setInteractive();
-        playButton.on("pointerdown", () => {
-            this.sound.add('startSound').play();
-            this.scene.start(GLOBALS.SCENES.GETREADY, "Game Started");
-        });
+        let ground = this.physics.add.staticGroup();
+        ground.create(840, 1900, 'ground').refreshBody();
 
-        //this button does nothing atm
-        // const scoreButton = this.add.image(
-        //     gameWidth * 0.7, 
-        //     gameHeight * 0.85, 
-        //     "scoreButton"
-        // ).setDepth(1).setScale(gameHeightScale);
-
-        // scoreButton.setInteractive();
-        // // scoreButton.on("pointerdown", () => {
-        // //     this.scene.start(GLOBALS.SCENES.SCORE, "Scores");
-        // // });
-
-        this.sound.add('music', {loop: true}).play();
+        this.input.once('pointerdown', () => {
+            this.scene.start(GLOBALS.SCENES.GAME);
+        }, this);
     }
 };

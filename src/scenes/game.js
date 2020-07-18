@@ -80,6 +80,19 @@ export class gameScene extends Phaser.Scene {
         mg.setOrigin(0).setScale(gameHeightScale);
         fg.setOrigin(0).setScale(gameHeightScale);
 
+        //setup pause and mute buttons
+        const pauseButton = this.add.image(
+            gameWidth * 0.9, 
+            gameHeight * 0.1,
+            "pause"
+        ).setDepth(1).setScale(gameHeightScale);
+
+        pauseButton.setInteractive();
+        pauseButton.on("pointerdown", () => {
+            this.scene.pause();
+            this.scene.launch(GLOBALS.SCENES.PAUSED);
+        });
+
         //floor to run on
         ground = this.physics.add.staticGroup();
         ground.create((gameWidth * 0.5), (gameHeight - 15), 'ground').refreshBody();

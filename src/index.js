@@ -2,7 +2,9 @@ import Phaser from "phaser";
 
 import { preloadScene } from "./scenes/preload";
 import { startMenuScene } from "./scenes/startmenu";
+import { getReadyScene } from "./scenes/getready";
 import { gameScene } from "./scenes/game";
+import { pausedScene } from "./scenes/paused";
 import { gameOverScene } from "./scenes/gameover";
 
 let game = new Phaser.Game({
@@ -25,7 +27,9 @@ let game = new Phaser.Game({
   scene: [
     preloadScene,
     startMenuScene,
+    getReadyScene,
     gameScene,
+    pausedScene,
     gameOverScene
   ],
   pixelArt: true

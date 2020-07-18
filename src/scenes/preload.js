@@ -1,12 +1,14 @@
 import { GLOBALS } from "../globals.js";
 
-
 //background and game elements
 import bgAsset from "../assets/background/background.png";
 import mgAsset from "../assets/background/midground.png";
 import fgAsset from "../assets/background/foreground.png";
 import groundAsset from "../assets/ground.png";
 import scoreZoneAsset from "../assets/score-zone.png";
+import pauseAsset from "../assets/Pause-Button.png";
+import soundOnAsset from "../assets/sound_btn.png";
+import soundOffAsset from "../assets/sound_mute_btn.png";
 
 import screenDarkenAsset from "../assets/ui/Screen Darkening Layer.png";
 import titleAsset from "../assets/ui/Logo V2.png";
@@ -67,6 +69,9 @@ export class preloadScene extends Phaser.Scene {
         this.load.image('foreground', fgAsset);
         this.load.image('ground', groundAsset);
         this.load.image('scoreZone', scoreZoneAsset);
+        this.load.image('pause', pauseAsset);
+        this.load.image('soundOn', soundOnAsset);
+        this.load.image('soundOff', soundOffAsset);
         
         this.load.image('screenDarken', screenDarkenAsset);
         this.load.image('title', titleAsset);
