@@ -17,7 +17,6 @@ export class gameOverScene extends Phaser.Scene {
     }
 
     init(gameData) {
-        console.log(gameData);
         gameScore = gameData.gameScore;
         highScore = gameData.highScore;
     }
@@ -42,11 +41,9 @@ export class gameOverScene extends Phaser.Scene {
 
         let scoreBoard = this.add.image(
             gameWidth * 0.5, 
-            gameHeight * 0.2, 
+            gameHeight * 0.4, 
             "scoreBoard"
         ).setDepth(1).setScale(gameHeightScale);
-
-        console.log(scoreBoard);
         
         gameScoreText = this.add.text(
             scoreBoard.x * 0.8, 
@@ -64,8 +61,14 @@ export class gameOverScene extends Phaser.Scene {
 
         this.add.image(
             gameWidth * 0.5, 
-            gameHeight * 0.5, 
+            gameHeight * 0.2, 
             "gameOverTitle"
+        ).setDepth(1).setScale(gameHeightScale);
+        
+        this.add.image(
+            gameWidth * 0.5, 
+            gameHeight * 0.6, 
+            "credits"
         ).setDepth(1).setScale(gameHeightScale);
 
         const restartButton = this.add.image(

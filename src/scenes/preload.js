@@ -5,6 +5,7 @@ import bgAsset from "../assets/background/background.png";
 import mgAsset from "../assets/background/midground.png";
 import fgAsset from "../assets/background/foreground.png";
 import groundAsset from "../assets/ground.png";
+import copyrightAsset from "../assets/Copyright.png";
 import scoreZoneAsset from "../assets/score-zone.png";
 import pauseAsset from "../assets/Pause-Button.png";
 import soundOnAsset from "../assets/sound_btn.png";
@@ -20,6 +21,7 @@ import instructionsAsset from "../assets/ui/Tap To Jump.png";
 
 import scoreBoardAsset from "../assets/ui/Score_Best.png";
 import gameOverAsset from "../assets/ui/Game Over V1.png";
+import creditsAsset from "../assets/Credits.png";
 import restartButtonAsset from "../assets/ui/Restart Button.png";
 import shareButtonAsset from "../assets/ui/Share Button.png";
 
@@ -68,6 +70,7 @@ export class preloadScene extends Phaser.Scene {
         this.load.image('midground', mgAsset);
         this.load.image('foreground', fgAsset);
         this.load.image('ground', groundAsset);
+        this.load.image('copyright', copyrightAsset);
         this.load.image('scoreZone', scoreZoneAsset);
         this.load.image('pause', pauseAsset);
         this.load.image('soundOn', soundOnAsset);
@@ -83,6 +86,7 @@ export class preloadScene extends Phaser.Scene {
 
         this.load.image('scoreBoard', scoreBoardAsset);
         this.load.image('gameOverTitle', gameOverAsset);
+        this.load.image('credits', creditsAsset);
         this.load.image('restartButton', restartButtonAsset);
         this.load.image('shareButton', shareButtonAsset);
 
