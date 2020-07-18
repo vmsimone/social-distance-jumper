@@ -56,6 +56,12 @@ export class startMenuScene extends Phaser.Scene {
             this.scene.start(GLOBALS.SCENES.GETREADY, "Game Started");
         });
 
+        this.add.image(
+            gameWidth * 0.5, 
+            gameHeight * 0.95, 
+            "copyright"
+        ).setDepth(1).setScale(gameHeightScale);
+
         //this button does nothing atm
         // const scoreButton = this.add.image(
         //     gameWidth * 0.7, 
