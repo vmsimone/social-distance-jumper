@@ -44,6 +44,8 @@ export class gameOverScene extends Phaser.Scene {
             gameHeight * 0.4, 
             "scoreBoard"
         ).setDepth(1).setScale(gameHeightScale);
+
+        console.log(scoreBoard.y);
         
         gameScoreText = this.add.text(
             scoreBoard.x * 0.8, 
