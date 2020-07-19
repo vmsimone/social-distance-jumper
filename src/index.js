@@ -1,4 +1,4 @@
-import Phaser from "phaser";
+import Phaser from "../phaser";
 
 import { preloadScene } from "./scenes/preload";
 import { startMenuScene } from "./scenes/startmenu";
