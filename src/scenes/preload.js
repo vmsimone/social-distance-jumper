@@ -1,62 +1,5 @@
 import { GLOBALS } from "../globals.js";
 
-//background and game elements
-import bgAsset from "../assets/background/background.png";
-import mgAsset from "../assets/background/midground.png";
-import fgAsset from "../assets/background/foreground.png";
-import groundAsset from "../assets/ground.png";
-import copyrightAsset from "../assets/Copyright.png";
-import scoreZoneAsset from "../assets/score-zone.png";
-import pauseAsset from "../assets/Pause-Button.png";
-import soundOnAsset from "../assets/sound_btn.png";
-import soundOffAsset from "../assets/sound_mute_btn.png";
-
-import screenDarkenAsset from "../assets/ui/Screen Darkening Layer.png";
-import titleAsset from "../assets/ui/Logo V2.png";
-import playButtonAsset from "../assets/ui/Start Button.png";
-import scoreButtonAsset from "../assets/ui/Score Button.png";
-
-import getReadyAsset from "../assets/ui/Get Ready.png";
-import instructionsAsset from "../assets/ui/Tap To Jump.png";
-
-import scoreBoardAsset from "../assets/ui/Score_Best.png";
-import gameOverAsset from "../assets/ui/Game Over V1.png";
-import creditsAsset from "../assets/Credits.png";
-import restartButtonAsset from "../assets/ui/Restart Button.png";
-import shareButtonAsset from "../assets/ui/Share Button.png";
-
-//characters and obstacles
-import playerAsset from "../assets/sprites/Player.png";
-import ped1Asset from "../assets/sprites/Masked Black Female.png";
-import ped2Asset from "../assets/sprites/Masked Black Male.png";
-import ped3Asset from "../assets/sprites/Masked Latin Female.png";
-import ped4Asset from "../assets/sprites/Masked Latin Male.png";
-import ped5Asset from "../assets/sprites/Masked Pregnant Female.png";
-import ped6Asset from "../assets/sprites/Masked White Female.png";
-import ped7Asset from "../assets/sprites/Masked White Male.png";
-import ped8Asset from "../assets/sprites/Masked Magic Man.png";
-import ped9Asset from "../assets/sprites/Masked Muscular White Male.png";
-import ped10Asset from "../assets/sprites/Masked White Female 2.png";
-import ped11Asset from "../assets/sprites/Masked White Female 3.png";
-import ped12Asset from "../assets/sprites/Masked White Male 2.png";
-
-import ped13Asset from "../assets/sprites/Maskless Black Female.png";
-import ped14Asset from "../assets/sprites/Maskless Black Male.png";
-import ped15Asset from "../assets/sprites/Maskless Child.png";
-import ped16Asset from "../assets/sprites/Maskless Latin Female.png";
-import ped17Asset from "../assets/sprites/Maskless Latin Male.png";
-import ped18Asset from "../assets/sprites/Maskless Pregnant Female.png";
-import ped19Asset from "../assets/sprites/Maskless White Female.png";
-import ped20Asset from "../assets/sprites/Maskless White Male.png";
-import ped21Asset from "../assets/sprites/Maskless White Male 2.png";
-import ped22Asset from "../assets/sprites/Maskless White Female 2.png";
-import ped23Asset from "../assets/sprites/Maskless White Female 3.png";
-import ped24Asset from "../assets/sprites/Maskless Muscular White Male.png";
-import ped25Asset from "../assets/sprites/Maskless Bauldric.png";
-
-import cloudAsset from "../assets/sprites/cloud.png";
-import droneAsset from "../assets/sprites/drone.png";
-
 export class preloadScene extends Phaser.Scene {
     constructor() {
         super({
@@ -66,69 +9,69 @@ export class preloadScene extends Phaser.Scene {
 
     preload() {
         //background and game elements
-        this.load.image('background', bgAsset);
-        this.load.image('midground', mgAsset);
-        this.load.image('foreground', fgAsset);
-        this.load.image('ground', groundAsset);
-        this.load.image('copyright', copyrightAsset);
-        this.load.image('scoreZone', scoreZoneAsset);
-        this.load.image('pause', pauseAsset);
-        this.load.image('soundOn', soundOnAsset);
-        this.load.image('soundOff', soundOffAsset);
+        this.load.image('background', 'src/assets/background/background.png');
+        this.load.image('midground', 'src/assets/background/midground.png');
+        this.load.image('foreground', 'src/assets/background/foreground.png');
+        this.load.image('ground', 'src/assets/ground.png');
+        this.load.image('copyright', 'src/assets/Copyright.png');
+        this.load.image('scoreZone', 'src/assets/score-zone.png');
+        this.load.image('pause', 'src/assets/Pause-Button.png');
+        this.load.image('soundOn', 'src/assets/sound_btn.png');
+        this.load.image('soundOff', 'src/assets/sound_mute_btn.png');
         
-        this.load.image('screenDarken', screenDarkenAsset);
-        this.load.image('title', titleAsset);
-        this.load.image('playButton', playButtonAsset);
-        this.load.image('scoreButton', scoreButtonAsset);
+        this.load.image('screenDarken', 'src/assets/ui/Screen Darkening Layer.png');
+        this.load.image('title', 'src/assets/ui/Logo V2.png');
+        this.load.image('playButton', 'src/assets/ui/Start Button.png');
+        this.load.image('scoreButton', 'src/assets/ui/Score Button.png');
 
-        this.load.image('getReady', getReadyAsset);
-        this.load.image('instructions', instructionsAsset);
+        this.load.image('getReady', 'src/assets/ui/Get Ready.png');
+        this.load.image('instructions', 'src/assets/ui/Tap To Jump.png');
 
-        this.load.image('scoreBoard', scoreBoardAsset);
-        this.load.image('gameOverTitle', gameOverAsset);
-        this.load.image('credits', creditsAsset);
-        this.load.image('restartButton', restartButtonAsset);
-        this.load.image('shareButton', shareButtonAsset);
+        this.load.image('scoreBoard', 'src/assets/ui/Score_Best.png');
+        this.load.image('gameOverTitle', 'src/assets/ui/Game Over V1.png');
+        this.load.image('credits', 'src/assets/Credits.png');
+        this.load.image('restartButton', 'src/assets/ui/Restart Button.png');
+        this.load.image('shareButton', 'src/assets/ui/Share Button.png');
 
         //player and obstacles
         this.load.spritesheet(
             'player', 
-            playerAsset,
+            'src/assets/sprites/Player.png',
             { frameWidth: 384, frameHeight: 384 }
         );
 
         this.load.spritesheet(
-          'cloud', 
-          cloudAsset,
-          { frameWidth: 192, frameHeight: 192 }
+            'cloud', 
+            'src/assets/sprites/cloud.png',
+            { frameWidth: 192, frameHeight: 192 }
         );
 
         //there should be a better way to do this but idk
-        this.load.spritesheet('ped1', ped1Asset, { frameWidth: 384, frameHeight: 384 });
-        this.load.spritesheet('ped2', ped2Asset, { frameWidth: 384, frameHeight: 384 });
-        this.load.spritesheet('ped3', ped3Asset, { frameWidth: 384, frameHeight: 384 });
-        this.load.spritesheet('ped4', ped4Asset, { frameWidth: 384, frameHeight: 384 });
-        this.load.spritesheet('ped5', ped5Asset, { frameWidth: 384, frameHeight: 384 });
-        this.load.spritesheet('ped6', ped6Asset, { frameWidth: 384, frameHeight: 384 });
-        this.load.spritesheet('ped7', ped7Asset, { frameWidth: 384, frameHeight: 384 });
-        this.load.spritesheet('ped8', ped8Asset, { frameWidth: 384, frameHeight: 384 });
-        this.load.spritesheet('ped9', ped9Asset, { frameWidth: 384, frameHeight: 384 });
-        this.load.spritesheet('ped10', ped10Asset, { frameWidth: 384, frameHeight: 384 });
-        this.load.spritesheet('ped11', ped11Asset, { frameWidth: 384, frameHeight: 384 });
-        this.load.spritesheet('ped12', ped12Asset, { frameWidth: 384, frameHeight: 384 });
-        this.load.spritesheet('ped13', ped13Asset, { frameWidth: 384, frameHeight: 384 });
-        this.load.spritesheet('ped14', ped14Asset, { frameWidth: 384, frameHeight: 384 });
-        this.load.spritesheet('ped15', ped15Asset, { frameWidth: 384, frameHeight: 384 });
-        this.load.spritesheet('ped16', ped16Asset, { frameWidth: 384, frameHeight: 384 });
-        this.load.spritesheet('ped17', ped17Asset, { frameWidth: 384, frameHeight: 384 });
-        this.load.spritesheet('ped18', ped18Asset, { frameWidth: 384, frameHeight: 384 });
-        this.load.spritesheet('ped19', ped19Asset, { frameWidth: 384, frameHeight: 384 });
-        this.load.spritesheet('ped20', ped20Asset, { frameWidth: 384, frameHeight: 384 });
-        this.load.spritesheet('ped21', ped21Asset, { frameWidth: 384, frameHeight: 384 });
-        this.load.spritesheet('ped22', ped22Asset, { frameWidth: 384, frameHeight: 384 });
-        this.load.spritesheet('ped23', ped23Asset, { frameWidth: 384, frameHeight: 384 });
-        this.load.spritesheet('ped24', ped24Asset, { frameWidth: 384, frameHeight: 384 });
-        this.load.spritesheet('ped25', ped25Asset, { frameWidth: 384, frameHeight: 384 });
+        this.load.spritesheet('ped1', 'src/assets/sprites/Masked Black Female.png', { frameWidth: 384, frameHeight: 384 });
+        this.load.spritesheet('ped2', 'src/assets/sprites/Masked Black Male.png', { frameWidth: 384, frameHeight: 384 });
+        this.load.spritesheet('ped3', 'src/assets/sprites/Masked Latin Female.png', { frameWidth: 384, frameHeight: 384 });
+        this.load.spritesheet('ped4', 'src/assets/sprites/Masked Latin Male.png', { frameWidth: 384, frameHeight: 384 });
+        this.load.spritesheet('ped5', 'src/assets/sprites/Masked Pregnant Female.png', { frameWidth: 384, frameHeight: 384 });
+        this.load.spritesheet('ped6', 'src/assets/sprites/Masked White Female.png', { frameWidth: 384, frameHeight: 384 });
+        this.load.spritesheet('ped7', 'src/assets/sprites/Masked White Male.png', { frameWidth: 384, frameHeight: 384 });
+        this.load.spritesheet('ped8', 'src/assets/sprites/Masked Magic Man.png', { frameWidth: 384, frameHeight: 384 });
+        this.load.spritesheet('ped9', 'src/assets/sprites/Masked Muscular White Male.png', { frameWidth: 384, frameHeight: 384 });
+        this.load.spritesheet('ped10', 'src/assets/sprites/Masked White Female 2.png', { frameWidth: 384, frameHeight: 384 });
+        this.load.spritesheet('ped11', 'src/assets/sprites/Masked White Female 3.png', { frameWidth: 384, frameHeight: 384 });
+        this.load.spritesheet('ped12', 'src/assets/sprites/Masked White Male 2.png', { frameWidth: 384, frameHeight: 384 });
+        this.load.spritesheet('ped13', 'src/assets/sprites/Maskless Black Female.png', { frameWidth: 384, frameHeight: 384 });
+        this.load.spritesheet('ped14', 'src/assets/sprites/Maskless Black Male.png', { frameWidth: 384, frameHeight: 384 });
+        this.load.spritesheet('ped15', 'src/assets/sprites/Maskless Child.png', { frameWidth: 384, frameHeight: 384 });
+        this.load.spritesheet('ped16', 'src/assets/sprites/Maskless Latin Female.png', { frameWidth: 384, frameHeight: 384 });
+        this.load.spritesheet('ped17', 'src/assets/sprites/Maskless Latin Male.png', { frameWidth: 384, frameHeight: 384 });
+        this.load.spritesheet('ped18', 'src/assets/sprites/Maskless Pregnant Female.png', { frameWidth: 384, frameHeight: 384 });
+        this.load.spritesheet('ped19', 'src/assets/sprites/Maskless White Female.png', { frameWidth: 384, frameHeight: 384 });
+        this.load.spritesheet('ped20', 'src/assets/sprites/Maskless White Male.png', { frameWidth: 384, frameHeight: 384 });
+        this.load.spritesheet('ped21', 'src/assets/sprites/Maskless White Male 2.png', { frameWidth: 384, frameHeight: 384 });
+        this.load.spritesheet('ped22', 'src/assets/sprites/Maskless White Female 2.png', { frameWidth: 384, frameHeight: 384 });
+        this.load.spritesheet('ped23', 'src/assets/sprites/Maskless White Female 3.png', { frameWidth: 384, frameHeight: 384 });
+        this.load.spritesheet('ped24', 'src/assets/sprites/Maskless Muscular White Male.png', { frameWidth: 384, frameHeight: 384 });
+        this.load.spritesheet('ped25', 'src/assets/sprites/Maskless Bauldric.png', { frameWidth: 384, frameHeight: 384 });
 
         this.load.audio('music', [ 
             "src/assets/audio/Retro City Loop.mp3", 
