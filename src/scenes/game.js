@@ -81,6 +81,8 @@ export class gameScene extends Phaser.Scene {
         mg.setOrigin(0).setScale(gameHeightScale);
         fg.setOrigin(0).setScale(gameHeightScale);
 
+        console.log(bg);
+
         //setup pause and mute buttons
         const pauseButton = this.add.image(
             gameWidth * 0.9, 
@@ -127,7 +129,7 @@ export class gameScene extends Phaser.Scene {
         gameOverSFX = this.sound.add('gameOverSound');
 
         //player can view score in upper-left corner
-        console.log('game height =' + gameHeight);
+        console.log('game height = ' + gameHeight);
         console.log(gameHeight * 0.05);
 
         scoreText = this.add.text(

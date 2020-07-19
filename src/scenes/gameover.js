@@ -29,55 +29,55 @@ export class gameOverScene extends Phaser.Scene {
         //images all scaled to fit 1080 x 1920
         gameHeightScale = gameHeight / 1920;
 
-        const bg = this.add.tileSprite(0, 0, 6080, 1920, 'background').setdepth(1);
-        const mg = this.add.tileSprite(0, 0, 6080, 1920, 'midground').setdepth(1);
-        const fg = this.add.tileSprite(0, 0, 6080, 1920, 'foreground').setdepth(1);
+        const bg = this.add.tileSprite(0, 0, 6080, 1920, 'background').setDepth(0);
+        const mg = this.add.tileSprite(0, 0, 6080, 1920, 'midground').setDepth(0);
+        const fg = this.add.tileSprite(0, 0, 6080, 1920, 'foreground').setDepth(0);
 
         bg.setOrigin(0).setScale(gameHeightScale);
         mg.setOrigin(0).setScale(gameHeightScale);
         fg.setOrigin(0).setScale(gameHeightScale);
         
-        this.add.image(0, 0, "screenDarken").setdepth(2).setOrigin(0).setScale(gameHeightScale);
+        this.add.image(0, 0, "screenDarken").setDepth(1).setOrigin(0).setScale(gameHeightScale);
 
         let scoreBoard = this.add.image(
             gameWidth * 0.5, 
             gameHeight * 0.4, 
             "scoreBoard"
-        ).setdepth(2).setScale(gameHeightScale);
+        ).setDepth(1).setScale(gameHeightScale);
 
-        console.log(scoreBoard.y);
+        console.log('scoreBoard Y = ' + scoreBoard.y);
         
         gameScoreText = this.add.text(
             scoreBoard.x * 0.8, 
             scoreBoard.y,
             `${gameScore}`, 
             { fontFamily: "dogicapixel", fontSize: '64px', fill: '#FFFF00' }
-        ).setdepth(2).setScale(gameHeightScale);
+        ).setDepth(1).setScale(gameHeightScale);
 
         highScoreText = this.add.text(
             scoreBoard.x * 1.12, 
             scoreBoard.y,
             `${updateHighscore()}`, 
             { fontFamily: "dogicapixel", fontSize: '64px', fill: '#FFFF00' }
-        ).setdepth(2).setScale(gameHeightScale);
+        ).setDepth(1).setScale(gameHeightScale);
 
         this.add.image(
             gameWidth * 0.5, 
             gameHeight * 0.2, 
             "gameOverTitle"
-        ).setdepth(2).setScale(gameHeightScale);
+        ).setDepth(1).setScale(gameHeightScale);
         
         this.add.image(
             gameWidth * 0.5, 
             gameHeight * 0.6, 
             "credits"
-        ).setdepth(2).setScale(gameHeightScale);
+        ).setDepth(1).setScale(gameHeightScale);
 
         const restartButton = this.add.image(
             gameWidth * 0.5, 
             gameHeight * 0.85,
             "restartButton"
-        ).setdepth(2).setScale(gameHeightScale);
+        ).setDepth(1).setScale(gameHeightScale);
 
         restartButton.setInteractive();
         restartButton.on("pointerdown", () => {
