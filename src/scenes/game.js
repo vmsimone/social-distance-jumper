@@ -127,6 +127,9 @@ export class gameScene extends Phaser.Scene {
         gameOverSFX = this.sound.add('gameOverSound');
 
         //player can view score in upper-left corner
+        console.log('game height =' + gameHeight);
+        console.log(gameHeight * 0.05);
+
         scoreText = this.add.text(
             (gameWidth * 0.05), 
             (gameHeight * 0.05), 
@@ -134,6 +137,7 @@ export class gameScene extends Phaser.Scene {
             { fontFamily: "dogicapixel", fontSize: '64px', fill: '#FFF' }
         ).setScale(gameHeightScale);
         score = 0;
+        console.log(scoreText);
 
         //floor to run on
         ground = this.physics.add.staticGroup();
