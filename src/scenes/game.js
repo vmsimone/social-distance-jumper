@@ -65,7 +65,7 @@ export class gameScene extends Phaser.Scene {
         score = 0;
         level = 1;
 
-        pedSpeed = gameWidth * -0.5;
+        pedSpeed = gameWidth * -0.6;
     }
 
     create() {
@@ -140,10 +140,10 @@ export class gameScene extends Phaser.Scene {
         ground.create((gameWidth * 0.5), (gameHeight - 15), 'ground').refreshBody();
         
         //invisible to the player, but adds points when touched by ped
-        scoreZone = this.physics.add.sprite((gameWidthScale * 150), (gameHeight - 200), 'scoreZone').setScale(gameHeightScale);
+        scoreZone = this.physics.add.sprite((gameWidth * 0.1), (gameHeight * 0.9 - 15), 'scoreZone').setScale(gameHeightScale);
 
         //sets up player properties
-        player = this.physics.add.sprite((gameWidthScale * 150), (gameHeight - 100), 'player');
+        player = this.physics.add.sprite((gameWidth * 0.1), (gameHeight * 0.9 - 15), 'player');
         player.setCollideWorldBounds(true);
         player.setScale(gameHeightScale);
 
@@ -157,7 +157,7 @@ export class gameScene extends Phaser.Scene {
         peds = this.physics.add.group();
 
         const firstPed = `ped${randomPedNumber()}`;
-        ped = peds.create((gameWidth + 200), (gameHeight - 100), firstPed);
+        ped = peds.create((gameWidth * 1.2), (gameHeight * 0.9 - 15), firstPed);
         ped.setScale(gameHeightScale);
         ped.masked = true;
         ped.body.setSize(hitBoxWidth, hitBoxHeight, true);
@@ -239,24 +239,27 @@ export class gameScene extends Phaser.Scene {
             
             sneezeChance = rollRandomNumber();
             if(sneezeChance > 985) {
-                if(ped && ped.body) {
+                //if statements make sure there are
+                //peds to sneeze/cough
+                //no floating virus clouds
+                if(ped && ped.body && ped.body.touching.down) {
                     pedSneeze(ped);
                 } 
-                if(newped && newped.body) {
+                if(newped && newped.body && newped.body.touching.down) {
                     pedSneeze(newped);
                 }
             } else if(sneezeChance < 30) {
-                if(ped && ped.body) {
+                if(ped && ped.body && ped.body.touching.down) {
                     pedCough(ped);
                 } 
-                if(newped && newped.body) {
+                if(newped && newped.body && newped.body.touching.down) {
                     pedCough(newped);
                 }
             }
       
             if(score / 10 == level) {
                 level++;
-                pedSpeed -= 100
+                pedSpeed -= (100 * gameWidthScale)
             }
       
             bg.tilePositionX += 0.5;
@@ -327,9 +330,11 @@ function addScore(_scoreZone, ped) {
   
         newpedNum = randomPedNumber();
 
-        newped = peds.create((gameWidth + 250), (gameHeight + (hitBoxHeight / 3)), `ped${newpedNum}`);
+        newped = peds.create((gameWidth * 1.3), (gameHeight * 0.9 - 15), `ped${newpedNum}`);
         newped.setScale(gameHeightScale);
 
+        //no flying pedestrians
+        newped.setVelocityY(2000);
         newped.setVelocityX(
             Phaser.Math.Between((pedSpeed - 10), (pedSpeed + 10))
         );
