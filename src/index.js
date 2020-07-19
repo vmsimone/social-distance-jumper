@@ -1,11 +1,11 @@
-import Phaser from "../phaser";
+import Phaser from "../phaser.js";
 
-import { preloadScene } from "./scenes/preload";
-import { startMenuScene } from "./scenes/startmenu";
-import { getReadyScene } from "./scenes/getready";
-import { gameScene } from "./scenes/game";
-import { pausedScene } from "./scenes/paused";
-import { gameOverScene } from "./scenes/gameover";
+import { preloadScene } from "./scenes/preload.js";
+import { startMenuScene } from "./scenes/startmenu.js";
+import { getReadyScene } from "./scenes/getready.js";
+import { gameScene } from "./scenes/game.js";
+import { pausedScene } from "./scenes/paused.js";
+import { gameOverScene } from "./scenes/gameover.js";
 
 let game = new Phaser.Game({
   type: Phaser.AUTO,
