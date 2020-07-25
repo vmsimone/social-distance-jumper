@@ -7,9 +7,6 @@ import { gameScene } from "./scenes/game.js";
 import { pausedScene } from "./scenes/paused.js";
 import { gameOverScene } from "./scenes/gameover.js";
 
-console.log(window.devicePixelRatio);
-console.log(screenBuffer(window.innerHeight));
-
 let game = new Phaser.Game({
   type: Phaser.AUTO,
   //the game should always be vertical or square
@@ -27,7 +24,7 @@ let game = new Phaser.Game({
       default: 'arcade',
       arcade: {
           gravity: { y: (window.innerHeight * 2) },
-          debug: true
+          debug: false
       }
   },
   scene: [
