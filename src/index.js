@@ -13,10 +13,13 @@ let game = new Phaser.Game({
   width: returnLowest(
     returnLowest(screenBuffer(window.innerWidth), screenBuffer(window.innerHeight)),
     //max width is 727
-    727
+    (727 * window.devicePixelRatio)
   ),
   //max height is 1293
-  height: returnLowest(screenBuffer(window.innerHeight), 1293),
+  height: returnLowest(
+    screenBuffer(window.innerHeight), 
+    (1293 * window.devicePixelRatio)
+  ),
   physics: {
       default: 'arcade',
       arcade: {
