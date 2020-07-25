@@ -12,16 +12,16 @@ let game = new Phaser.Game({
   //the game should always be vertical or square
   width: returnLowest(
     returnLowest(screenBuffer(window.innerWidth), screenBuffer(window.innerHeight)),
-    //max width is 1080
-    1080
+    //max width is 727
+    727
   ),
-  //max height is 1920
-  height: returnLowest(screenBuffer(window.innerHeight), 1920),
+  //max height is 1293
+  height: returnLowest(screenBuffer(window.innerHeight), 1293),
   physics: {
       default: 'arcade',
       arcade: {
           gravity: { y: (window.innerHeight * 2) },
-          debug: false
+          debug: true
       }
   },
   scene: [

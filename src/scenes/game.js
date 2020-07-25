@@ -57,7 +57,7 @@ export class gameScene extends Phaser.Scene {
         //this will help us organize better
         gameWidth = this.game.renderer.width;
         gameHeight = this.game.renderer.height;
-
+        
         //images all scaled to fit 1080 x 1920
         gameWidthScale = gameWidth / 1080;
         gameHeightScale = gameHeight / 1920;
@@ -73,15 +73,17 @@ export class gameScene extends Phaser.Scene {
         pointer = this.input.activePointer;
 
         //create the background
-        bg = this.add.tileSprite(0, 0, 6080, 1920, 'background').setDepth(0);
-        mg = this.add.tileSprite(0, 0, 6080, 1920, 'midground').setDepth(0);
-        fg = this.add.tileSprite(0, 0, 6080, 1920, 'foreground').setDepth(0);
 
-        bg.setOrigin(0).setScale(gameHeightScale);
-        mg.setOrigin(0).setScale(gameHeightScale);
-        fg.setOrigin(0).setScale(gameHeightScale);
+        //bg scaled to fit 727 x 1293
+        const bgHeightScale = gameHeight / 1293;
 
-        console.log(bg);
+        bg = this.add.tileSprite(0, 0, 4096, 1293, 'background').setDepth(0);
+        mg = this.add.tileSprite(0, 0, 4096, 1293, 'midground').setDepth(0);
+        fg = this.add.tileSprite(0, 0, 4096, 1293, 'foreground').setDepth(0);
+
+        bg.setOrigin(0).setScale(bgHeightScale);
+        mg.setOrigin(0).setScale(bgHeightScale);
+        fg.setOrigin(0).setScale(bgHeightScale);
 
         //setup pause and mute buttons
         const pauseButton = this.add.image(
@@ -129,9 +131,6 @@ export class gameScene extends Phaser.Scene {
         gameOverSFX = this.sound.add('gameOverSound');
 
         //player can view score in upper-left corner
-        console.log('game height = ' + gameHeight);
-        console.log(gameHeight * 0.05);
-
         scoreText = this.add.text(
             (gameWidth * 0.05), 
             (gameHeight * 0.05), 
@@ -139,17 +138,16 @@ export class gameScene extends Phaser.Scene {
             { fontFamily: "dogicapixel", fontSize: '64px', fill: '#FFF' }
         ).setScale(gameHeightScale);
         score = 0;
-        console.log(scoreText);
 
         //floor to run on
         ground = this.physics.add.staticGroup();
         ground.create((gameWidth * 0.5), (gameHeight - 15), 'ground').refreshBody();
         
         //invisible to the player, but adds points when touched by ped
-        scoreZone = this.physics.add.sprite((gameWidth * 0.1), (gameHeight * 0.9 - 15), 'scoreZone').setScale(gameHeightScale);
+        scoreZone = this.physics.add.sprite((gameWidth * 0.1), (gameHeight * 0.9 - 50), 'scoreZone').setScale(gameHeightScale);
 
         //sets up player properties
-        player = this.physics.add.sprite((gameWidth * 0.1), (gameHeight * 0.9 - 15), 'player');
+        player = this.physics.add.sprite((gameWidth * 0.1), (gameHeight * 0.9 - 50), 'player');
         player.setCollideWorldBounds(true);
         player.setScale(gameHeightScale);
 
@@ -163,7 +161,7 @@ export class gameScene extends Phaser.Scene {
         peds = this.physics.add.group();
 
         const firstPed = `ped${randomPedNumber()}`;
-        ped = peds.create((gameWidth * 1.2), (gameHeight * 0.9 - 15), firstPed);
+        ped = peds.create((gameWidth * 1.2), (gameHeight * 0.9 - 50), firstPed);
         ped.setScale(gameHeightScale);
         ped.masked = true;
         ped.body.setSize(hitBoxWidth, hitBoxHeight, true);
