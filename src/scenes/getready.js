@@ -1,11 +1,11 @@
-import { GLOBALS } from "../globals.js";
+import { SCENES } from "../sceneHandler.js";
 
 let gameProperties;
 
 export class getReadyScene extends Phaser.Scene {
     constructor() {
         super({
-            key: GLOBALS.SCENES.GETREADY
+            key: SCENES.GETREADY
         });
     }
 
@@ -14,33 +14,24 @@ export class getReadyScene extends Phaser.Scene {
     }
 
     create() {
-        //this will help us organize better
-        const gameWidth = gameProperties.width;
-        const gameHeight = gameProperties.height;
-
-        //bg scaled to fit 727 x 1293
-        const bgHeightScale = gameHeight / 1293;
-
-        //images all scaled to fit 1080 x 1920
-        const gameHeightScale = gameHeight / 1920;
-
-        this.add.image(
-            gameWidth * 0.5, 
-            gameHeight * 0.25, 
+        const getReady = this.add.image(
+            gameProperties.width * 0.5, 
+            gameProperties.height * 0.25, 
             "getReady"
-        ).setDepth(1).setScale(gameHeightScale);
+        ).setDepth(1).setScale(gameProperties.heightScale);
         
-        this.add.image(
-            gameWidth * 0.5, 
-            gameHeight * 0.85, 
+        const instructions = this.add.image(
+            gameProperties.width * 0.5, 
+            gameProperties.height * 0.85, 
             "instructions"
-        ).setDepth(1).setScale(gameHeightScale);
-
-        let ground = this.physics.add.staticGroup();
-        ground.create(840, 1900, 'ground').refreshBody();
+        ).setDepth(1).setScale(gameProperties.heightScale);
 
         this.input.once('pointerdown', () => {
-            this.scene.start(GLOBALS.SCENES.GAME);
+            //won't need these once game starts
+            getReady.destroy();
+            instructions.destroy();
+
+            this.scene.launch(SCENES.GAME, gameProperties);
         }, this);
     }
 };

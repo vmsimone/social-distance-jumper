@@ -1,4 +1,4 @@
-import { GLOBALS } from "../globals.js";
+import { SCENES } from "../sceneHandler.js";
 
 let gameWidth;
 let gameHeight;
@@ -12,7 +12,7 @@ let highScoreText;
 export class gameOverScene extends Phaser.Scene {
     constructor() {
         super({
-            key: GLOBALS.SCENES.GAMEOVER
+            key: SCENES.GAMEOVER
         });
     }
 
@@ -84,7 +84,7 @@ export class gameOverScene extends Phaser.Scene {
         restartButton.setInteractive();
         restartButton.on("pointerdown", () => {
             this.sound.add('startSound').play();
-            this.scene.start(GLOBALS.SCENES.GAME, {"highScore": highScore});
+            this.scene.start(SCENES.GAME, {"highScore": highScore});
         });
     }
 };

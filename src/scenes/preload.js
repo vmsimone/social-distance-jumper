@@ -1,9 +1,9 @@
-import { GLOBALS } from "../globals.js";
+import { SCENES } from "../sceneHandler.js";
 
 export class preloadScene extends Phaser.Scene {
     constructor() {
         super({
-            key: GLOBALS.SCENES.PRELOAD
+            key: SCENES.PRELOAD
         });
     }
 
@@ -195,6 +195,6 @@ export class preloadScene extends Phaser.Scene {
         ).setDepth(1).setScale(gameProperties.heightScale);
 
         //pass the properties and game objects to the next scene
-        this.scene.launch(GLOBALS.SCENES.STARTMENU, gameProperties);
+        this.scene.launch(SCENES.STARTMENU, gameProperties);
     }
 }

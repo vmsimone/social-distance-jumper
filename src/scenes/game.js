@@ -1,4 +1,6 @@
-import { GLOBALS } from "../globals.js";
+import { SCENES } from "../sceneHandler.js";
+
+let gameProperties;
 
 let gameWidth;
 let gameHeight;
@@ -19,9 +21,6 @@ let pedCollider;
 let cloudCollider;
 let scoreCollider;
 
-let bg;
-let mg;
-let fg;
 let ground;
 
 let player;
@@ -43,11 +42,15 @@ let gameOverSFX;
 export class gameScene extends Phaser.Scene {
     constructor() {
         super({
-            key: GLOBALS.SCENES.GAME
+            key: SCENES.GAME
         });
     }
 
-    init(gameData) {
+    init(sceneData) {
+        gameProperties = sceneData;
+
+        //get rid of this later
+        let gameData = {}
         if(gameData.highScore) {
             highScore = gameData.highScore;
         } else {
@@ -72,19 +75,6 @@ export class gameScene extends Phaser.Scene {
         cursors = this.input.keyboard.createCursorKeys();
         pointer = this.input.activePointer;
 
-        //create the background
-
-        //bg scaled to fit 727 x 1293
-        const bgHeightScale = gameHeight / 1293;
-
-        bg = this.add.tileSprite(0, 0, 4096, 1293, 'background').setDepth(0);
-        mg = this.add.tileSprite(0, 0, 4096, 1293, 'midground').setDepth(0);
-        fg = this.add.tileSprite(0, 0, 4096, 1293, 'foreground').setDepth(0);
-
-        bg.setOrigin(0).setScale(bgHeightScale);
-        mg.setOrigin(0).setScale(bgHeightScale);
-        fg.setOrigin(0).setScale(bgHeightScale);
-
         //setup pause and mute buttons
         const pauseButton = this.add.image(
             gameWidth * 0.9, 
@@ -108,7 +98,7 @@ export class gameScene extends Phaser.Scene {
         pauseButton.setInteractive();
         pauseButton.on("pointerdown", () => {
             this.scene.pause();
-            this.scene.launch(GLOBALS.SCENES.PAUSED);
+            this.scene.launch(SCENES.PAUSED);
         });
 
         muteButtton.setInteractive();
@@ -125,10 +115,10 @@ export class gameScene extends Phaser.Scene {
         });
         
         //sounds
-        jumpSFX = this.sound.add('jumpSound');
+        //jumpSFX = this.sound.add('jumpSound');
         // sneezeSFX = this.sound.add('sneezeSound');
         // coughSFX = this.sound.add('coughSound');
-        gameOverSFX = this.sound.add('gameOverSound');
+        //gameOverSFX = this.sound.add('gameOverSound');
 
         //player can view score in upper-left corner
         scoreText = this.add.text(
@@ -266,9 +256,9 @@ export class gameScene extends Phaser.Scene {
                 pedSpeed -= (100 * gameWidthScale)
             }
       
-            bg.tilePositionX += 0.5;
-            mg.tilePositionX += 2.5;
-            fg.tilePositionX += 3.75;
+            gameProperties.background.bg.tilePositionX += 0.5;
+            gameProperties.background.mg.tilePositionX += 2.5;
+            gameProperties.background.fg.tilePositionX += 3.75;
         }
     }
 };
@@ -379,5 +369,5 @@ function createWalkingAnim(pedId, anims) {
 }
 
 function runGameOver(scene) {
-    scene.start(GLOBALS.SCENES.GAMEOVER, { "gameScore": score, "highScore": highScore });
+    scene.start(SCENES.GAMEOVER, { "gameScore": score, "highScore": highScore });
 }

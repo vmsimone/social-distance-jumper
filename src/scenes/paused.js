@@ -1,11 +1,11 @@
-import { GLOBALS } from "../globals.js";
+import { SCENES } from "../sceneHandler.js";
 
 let screenDarken;
 
 export class pausedScene extends Phaser.Scene {
     constructor() {
         super({
-            key: GLOBALS.SCENES.PAUSED
+            key: SCENES.PAUSED
         });
     }
 
@@ -13,7 +13,7 @@ export class pausedScene extends Phaser.Scene {
         console.log('game paused');
         this.input.once('pointerdown', () => {
             screenDarken.destroy();
-            this.scene.resume(GLOBALS.SCENES.GAME);
+            this.scene.resume(SCENES.GAME);
         }, this);
     }
 
