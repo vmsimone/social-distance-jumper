@@ -111,6 +111,90 @@ export class preloadScene extends Phaser.Scene {
 
     create() {
         // maybe add anims here?
-        this.scene.start(GLOBALS.SCENES.STARTMENU, "preloaded");
+        const gameProperties = {
+            width: this.game.renderer.width,
+            widthScale: (this.game.renderer.width / 1080),
+            //we'll leave 50px for ad space
+            height: this.game.renderer.height - 50,
+            heightScale: (this.game.renderer.height / 1920),
+            //sprites and bg are on different ratios
+            bgHeight: 1293,
+            bgWidth: 4096, //must be power of 2
+            bgHeightScale: ((this.game.renderer.height - 50) / 1293), //bg scaled to fit 727 x 1293
+            score: 0,
+            level: 1,
+            background: {
+                bg: '',
+                mg: '',
+                fg: '',
+                screenDarken: '',
+                title: '',
+                copyright: ''
+            },
+            buttons: {
+                playButton: '',
+                pauseButton: '',
+                muteButton: '',
+                unMuteButton: ''
+            },
+            gameObjects: {
+                ground: '',
+                player: '',
+                ped: ''
+            }
+        }
+
+        //used to set up parallax bg below
+        function bgTileSprite(scene, spriteRef) {
+            return scene.add.tileSprite(0, 0, 4096, 1293, spriteRef)
+                .setDepth(0)
+                .setOrigin(0)
+                .setScale(gameProperties.bgHeightScale)
+            ;
+        }
+
+        //create the background
+        gameProperties.background.bg = bgTileSprite(this, 'background');
+        gameProperties.background.mg = bgTileSprite(this, 'midground');
+        gameProperties.background.fg = bgTileSprite(this, 'foreground');
+
+        //filter to darken background for start menu
+        gameProperties.background.screenDarken = this.add.image(0, 0, "screenDarken")
+            .setDepth(1)
+            .setOrigin(0)
+            .setScale(gameProperties.heightScale)
+        ;
+
+        //create the ground (and ad space)
+        gameProperties.gameObjects.ground = this.physics.add.staticGroup()
+            .create(0, gameProperties.height, 'ground')
+            .setOrigin(0)
+            .refreshBody()
+        ;
+
+        //start menu section
+        //"Social Distance Jumper"
+        gameProperties.background.title = this.add.image(
+            gameProperties.width * 0.5, 
+            gameProperties.height * 0.25,
+            "title"
+        ).setDepth(1).setScale(gameProperties.heightScale);
+
+        //start button
+        gameProperties.buttons.playButton = this.add.image(
+            gameProperties.width * 0.5, 
+            gameProperties.height * 0.85, 
+            "playButton"
+        ).setDepth(1).setScale(gameProperties.heightScale).setInteractive();
+
+        //copyright
+        gameProperties.background.copyright = this.add.image(
+            gameProperties.width * 0.5, 
+            gameProperties.height * 0.95, 
+            "copyright"
+        ).setDepth(1).setScale(gameProperties.heightScale);
+
+        //pass the properties and game objects to the next scene
+        this.scene.launch(GLOBALS.SCENES.STARTMENU, gameProperties);
     }
 }
