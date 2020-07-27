@@ -14,17 +14,17 @@ export class getReadyScene extends Phaser.Scene {
     }
 
     create() {
-        const getReady = this.add.image(
-            gameProperties.width * 0.5, 
-            gameProperties.height * 0.25, 
-            "getReady"
-        ).setDepth(1).setScale(gameProperties.heightScale);
+        const getReady = gameProperties.addImage(this, {
+            name: "getReady",
+            widthRatio: 0.5,
+            heightRatio: 0.25
+        });
         
-        const instructions = this.add.image(
-            gameProperties.width * 0.5, 
-            gameProperties.height * 0.85, 
-            "instructions"
-        ).setDepth(1).setScale(gameProperties.heightScale);
+        const instructions = gameProperties.addImage(this, {
+            name: "instructions",
+            widthRatio: 0.5,
+            heightRatio: 0.85
+        });
 
         this.input.once('pointerdown', () => {
             //won't need these once game starts

@@ -2,20 +2,10 @@ import { SCENES } from "../sceneHandler.js";
 
 let gameProperties;
 
-let gameWidth;
-let gameHeight;
-let gameHeightScale;
-let gameWidthScale;
-
 let highScore;
-let score;
-let scoreText;
 let scoreZone;
-let gameMuted = false;
 let level;
 let pedSpeed; //peds move right to left
-let cursors;
-let pointer;
 let sneezeChance;
 let pedCollider;
 let cloudCollider;
@@ -56,62 +46,16 @@ export class gameScene extends Phaser.Scene {
         } else {
             highScore = 0;
         }
-        
-        //this will help us organize better
-        gameWidth = this.game.renderer.width;
-        gameHeight = this.game.renderer.height;
-        
-        //images all scaled to fit 1080 x 1920
-        gameWidthScale = gameWidth / 1080;
-        gameHeightScale = gameHeight / 1920;
-
-        score = 0;
         level = 1;
 
-        pedSpeed = gameWidth * -0.6;
+        pedSpeed = gameProperties.width * -0.6;
     }
 
     create() {
-        cursors = this.input.keyboard.createCursorKeys();
-        pointer = this.input.activePointer;
-
-        //setup pause and mute buttons
-        const pauseButton = this.add.image(
-            gameWidth * 0.9, 
-            gameHeight * 0.05,
-            "pause"
-        ).setDepth(1).setScale(gameHeightScale);
-
-        const muteButtton = this.add.image(
-            gameWidth * 0.8, 
-            gameHeight * 0.05,
-            "soundOn"
-        ).setDepth(1).setScale(gameHeightScale);
-
-        //this will be hidden at first
-        const unMuteButtton = this.add.image(
-            gameWidth * 0.8, 
-            gameHeight * 0.05,
-            "soundOff"
-        ).setDepth(0).setScale(gameHeightScale);
-
-        pauseButton.setInteractive();
-        pauseButton.on("pointerdown", () => {
+        //let player pause
+        gameProperties.buttons.pauseButton.on("pointerdown", () => {
             this.scene.pause();
             this.scene.launch(SCENES.PAUSED);
-        });
-
-        muteButtton.setInteractive();
-        muteButtton.on("pointerdown", () => {
-            if(gameMuted) {
-                gameMuted = false;
-                this.sound.mute = false;
-                unMuteButtton.setDepth(0);
-            } else {
-                gameMuted = true;
-                this.sound.mute = true;
-                unMuteButtton.setDepth(2);
-            }
         });
         
         //sounds
@@ -121,25 +65,19 @@ export class gameScene extends Phaser.Scene {
         //gameOverSFX = this.sound.add('gameOverSound');
 
         //player can view score in upper-left corner
-        scoreText = this.add.text(
-            (gameWidth * 0.05), 
-            (gameHeight * 0.05), 
-            `score: ${score}`, 
-            { fontFamily: "dogicapixel", fontSize: '64px', fill: '#FFF' }
-        ).setScale(gameHeightScale);
-        score = 0;
-
-        //floor to run on
-        ground = this.physics.add.staticGroup();
-        ground.create((gameWidth * 0.5), (gameHeight - 15), 'ground').refreshBody();
+        gameProperties.scoreText = gameProperties.addText(this, {
+            content: gameProperties.score,
+            widthRatio: 0.05,
+            heightRatio: 0.05
+        });
         
         //invisible to the player, but adds points when touched by ped
-        scoreZone = this.physics.add.sprite((gameWidth * 0.1), (gameHeight * 0.9 - 50), 'scoreZone').setScale(gameHeightScale);
+        scoreZone = this.physics.add.sprite((gameProperties.width * 0.1), (gameProperties.height * 0.9 - 50), 'scoreZone').setScale(gameProperties.heightScale);
 
         //sets up player properties
-        player = this.physics.add.sprite((gameWidth * 0.1), (gameHeight * 0.9 - 50), 'player');
+        player = this.physics.add.sprite((gameProperties.width * 0.1), (gameProperties.height * 0.9 - 50), 'player');
         player.setCollideWorldBounds(true);
-        player.setScale(gameHeightScale);
+        player.setScale(gameProperties.heightScale);
 
         //sprite "boxes" are larger than the sprite, so we resize them
         hitBoxHeight = player.body.height * 0.7;
@@ -151,8 +89,8 @@ export class gameScene extends Phaser.Scene {
         peds = this.physics.add.group();
 
         const firstPed = `ped${randomPedNumber()}`;
-        ped = peds.create((gameWidth * 1.2), (gameHeight * 0.9 - 50), firstPed);
-        ped.setScale(gameHeightScale);
+        ped = peds.create((gameProperties.width * 1.2), (gameProperties.height * 0.9 - 50), firstPed);
+        ped.setScale(gameProperties.heightScale);
         ped.masked = true;
         ped.body.setSize(hitBoxWidth, hitBoxHeight, true);
         ped.setVelocityX(pedSpeed);
@@ -224,11 +162,11 @@ export class gameScene extends Phaser.Scene {
                 player.anims.play('running', true);
             }
       
-            if ((cursors.space.isDown || cursors.up.isDown || pointer.isDown) && player.body.touching.down) {
-                if(!gameMuted) {
-                    jumpSFX.play();
+            if ((gameProperties.cursors.space.isDown || gameProperties.cursors.up.isDown || gameProperties.pointer.isDown) && player.body.touching.down) {
+                if(!gameProperties.muted) {
+                    //jumpSFX.play();
                 }
-                player.setVelocityY(gameHeight * -1);
+                player.setVelocityY(gameProperties.height * -1);
             }
             
             sneezeChance = rollRandomNumber();
@@ -251,9 +189,9 @@ export class gameScene extends Phaser.Scene {
                 }
             }
       
-            if(score / 10 == level) {
+            if(gameProperties.score / 10 == level) {
                 level++;
-                pedSpeed -= (100 * gameWidthScale)
+                pedSpeed -= (100 * gameProperties.widthScale)
             }
       
             gameProperties.background.bg.tilePositionX += 0.5;
@@ -270,20 +208,20 @@ function rollRandomNumber() {
 function pedSneeze(ped) {
     const thisPedSpeed = ped.body.velocity.x || 0;
     const pedPositionX = ped.x + (ped.displayOriginX / 2);
-    // if(!gameMuted) {
+    // if(!gameProperties.muted) {
     //     sneezeSFX.play();
     // }
     
     if (ped.masked == null) {
         cloud = clouds.create(pedPositionX, ped.y + 75, 'cloud');
-        cloud.setScale(gameHeightScale);
+        cloud.setScale(gameProperties.heightScale);
 
         cloud.body.setSize(150, 100, true);
         cloud.setVelocityX(thisPedSpeed - 200);
         cloud.anims.play('virusCloud');
     } else {
         cloud = clouds.create(pedPositionX, ped.y + 75, 'cloud');
-        cloud.setScale(gameHeightScale);
+        cloud.setScale(gameProperties.heightScale);
 
         cloud.body.setSize(150, 100, true);
         cloud.body.setAllowGravity(false);
@@ -295,20 +233,20 @@ function pedSneeze(ped) {
 function pedCough(ped) {
     const thisPedSpeed = ped.body.velocity.x || 0;
     const pedPositionX = ped.x + (ped.displayOriginX / 2);
-    // if(!gameMuted) {
+    // if(!gameProperties.muted) {
     //     coughSFX.play();
     // }
 
     if (ped.masked == null) {
         cloud = clouds.create(pedPositionX, ped.y + 75, 'cloud');
-        cloud.setScale(gameHeightScale);
+        cloud.setScale(gameProperties.heightScale);
 
         cloud.body.setSize(150, 100, true);
         cloud.setVelocityX(thisPedSpeed - 75);
         cloud.anims.play('virusCloud');
     } else {
         cloud = clouds.create(pedPositionX, ped.y + 75, 'cloud');
-        cloud.setScale(gameHeightScale);
+        cloud.setScale(gameProperties.heightScale);
 
         cloud.body.setSize(150, 100, true);
         cloud.body.setAllowGravity(false);
@@ -319,13 +257,13 @@ function pedCough(ped) {
 
 function addScore(_scoreZone, ped) {
     if (ped.scored == undefined) {
-        score += 1;
-        scoreText.setText(`score: ${score}`);
+        gameProperties.score += 1;
+        gameProperties.scoreText.setText(gameProperties.score);
   
         newpedNum = randomPedNumber();
 
-        newped = peds.create((gameWidth * 1.3), (gameHeight * 0.9 - 15), `ped${newpedNum}`);
-        newped.setScale(gameHeightScale);
+        newped = peds.create((gameProperties.width * 1.3), (gameProperties.height * 0.9 - 15), `ped${newpedNum}`);
+        newped.setScale(gameProperties.heightScale);
 
         //no flying pedestrians
         newped.setVelocityY(2000);
@@ -352,8 +290,8 @@ function contact(player, _ped) {
     this.physics.world.removeCollider(cloudCollider);
     this.physics.world.removeCollider(scoreCollider);
 
-    if(!gameMuted) {
-        gameOverSFX.play();
+    if(!gameProperties.muted) {
+        //gameOverSFX.play();
     }
 
     player.infected = true;
@@ -369,5 +307,5 @@ function createWalkingAnim(pedId, anims) {
 }
 
 function runGameOver(scene) {
-    scene.start(SCENES.GAMEOVER, { "gameScore": score, "highScore": highScore });
+    scene.start(SCENES.GAMEOVER, { "gameScore": gameProperties.score, "highScore": highScore });
 }

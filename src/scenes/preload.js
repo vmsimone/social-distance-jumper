@@ -110,8 +110,8 @@ export class preloadScene extends Phaser.Scene {
     }
 
     create() {
-        // maybe add anims here?
-        const gameProperties = {
+        //this will hold all info about the game area and should only be referenced here
+        const userDevice = {
             width: this.game.renderer.width,
             widthScale: (this.game.renderer.width / 1080),
             //we'll leave 50px for ad space
@@ -121,78 +121,145 @@ export class preloadScene extends Phaser.Scene {
             bgHeight: 1293,
             bgWidth: 4096, //must be power of 2
             bgHeightScale: ((this.game.renderer.height - 50) / 1293), //bg scaled to fit 727 x 1293
+        }
+
+        // this object will hold all of our game data and be used/updated in every scene
+        const gameProperties = {
+            //using methods will keep things organized and let us access game area props
+            addImage: (scene, sprite) => {
+                return scene.add.image(
+                    userDevice.width * sprite.widthRatio, 
+                    userDevice.height * sprite.heightRatio,
+                    sprite.name
+                ).setDepth(1).setScale(userDevice.heightScale);
+            },
+            bgTileSprite: (scene, spriteName) => {
+                return scene.add.tileSprite(0, 0, 4096, 1293, spriteName)
+                    .setDepth(0)
+                    .setOrigin(0)
+                    .setScale(userDevice.bgHeightScale)
+                ;
+            },
+            addButton: (scene, sprite) => {
+                return scene.add.image(
+                    userDevice.width * sprite.widthRatio, 
+                    userDevice.height * sprite.heightRatio,
+                    sprite.name
+                ).setDepth(1).setScale(userDevice.heightScale).setInteractive();
+            },
+            addText: (scene, text) => {
+                return scene.add.text(
+                    userDevice.width * text.widthRatio, 
+                    userDevice.height * text.heightRatio,
+                    text.content,
+                    { fontFamily: "dogicapixel", fontSize: '64px', fill: '#FFF' }
+                ).setScale(userDevice.heightScale);
+            },
+            //game props
+            muted: false,
             score: 0,
+            highScore: 0,
             level: 1,
             background: {
-                bg: '',
-                mg: '',
-                fg: '',
-                screenDarken: '',
-                title: '',
-                copyright: ''
+                //populated below using methods in this object
             },
             buttons: {
-                playButton: '',
-                pauseButton: '',
-                muteButton: '',
-                unMuteButton: ''
+                //populated below using methods in this object
+            },
+            text: {
+                //populated below using methods in this object
             },
             gameObjects: {
-                ground: '',
-                player: '',
-                ped: ''
+                //populated below using methods in this object
+            },
+            colliders: {
+                //populated below using methods in this object
             }
         }
 
-        //used to set up parallax bg below
-        function bgTileSprite(scene, spriteRef) {
-            return scene.add.tileSprite(0, 0, 4096, 1293, spriteRef)
-                .setDepth(0)
-                .setOrigin(0)
-                .setScale(gameProperties.bgHeightScale)
-            ;
-        }
-
         //create the background
-        gameProperties.background.bg = bgTileSprite(this, 'background');
-        gameProperties.background.mg = bgTileSprite(this, 'midground');
-        gameProperties.background.fg = bgTileSprite(this, 'foreground');
+        gameProperties.background.bg = gameProperties.bgTileSprite(this, 'background');
+        gameProperties.background.mg = gameProperties.bgTileSprite(this, 'midground');
+        gameProperties.background.fg = gameProperties.bgTileSprite(this, 'foreground');
 
         //filter to darken background for start menu
         gameProperties.background.screenDarken = this.add.image(0, 0, "screenDarken")
             .setDepth(1)
             .setOrigin(0)
-            .setScale(gameProperties.heightScale)
+            .setScale(userDevice.heightScale)
         ;
 
         //create the ground (and ad space)
         gameProperties.gameObjects.ground = this.physics.add.staticGroup()
-            .create(0, gameProperties.height, 'ground')
+            .create(0, userDevice.height, 'ground')
             .setOrigin(0)
             .refreshBody()
         ;
 
-        //start menu section
+        //=== start menu section ===
         //"Social Distance Jumper"
-        gameProperties.background.title = this.add.image(
-            gameProperties.width * 0.5, 
-            gameProperties.height * 0.25,
-            "title"
-        ).setDepth(1).setScale(gameProperties.heightScale);
+        gameProperties.background.title = gameProperties.addImage(this, {
+            name: "title",
+            widthRatio: 0.5,
+            heightRatio: 0.25
+        });
 
         //start button
-        gameProperties.buttons.playButton = this.add.image(
-            gameProperties.width * 0.5, 
-            gameProperties.height * 0.85, 
-            "playButton"
-        ).setDepth(1).setScale(gameProperties.heightScale).setInteractive();
+        gameProperties.buttons.playButton = gameProperties.addButton(this, {
+            name: "playButton",
+            widthRatio: 0.5,
+            heightRatio: 0.85
+        });
 
         //copyright
-        gameProperties.background.copyright = this.add.image(
-            gameProperties.width * 0.5, 
-            gameProperties.height * 0.95, 
-            "copyright"
-        ).setDepth(1).setScale(gameProperties.heightScale);
+        gameProperties.background.copyright = gameProperties.addImage(this, {
+            name: "copyright",
+            widthRatio: 0.5,
+            heightRatio: 0.95
+        });
+
+        //=== ui buttons ===
+        //pause
+        gameProperties.buttons.pauseButton = gameProperties.addButton(this, {
+            name: "pause",
+            widthRatio: 0.9,
+            heightRatio: 0.05
+        });
+
+        //unmute
+        //this will be hidden at first
+        gameProperties.buttons.unMuteButton = gameProperties.addButton(this, {
+            name: "soundOff",
+            widthRatio: 0.8,
+            heightRatio: 0.05
+        });
+
+        //mute
+        gameProperties.buttons.muteButton = gameProperties.addButton(this, {
+            name: "soundOn",
+            widthRatio: 0.8,
+            heightRatio: 0.05
+        });
+        
+        //lets player mute and unmute
+        gameProperties.buttons.muteButton.on("pointerdown", () => {
+            if(gameProperties.muted) {
+                gameProperties.muted = false;
+                this.sound.mute = false;
+                gameProperties.buttons.unMuteButton.setDepth(0);
+            } else {
+                gameProperties.muted = true;
+                this.sound.mute = true;
+                gameProperties.buttons.unMuteButton.setDepth(2);
+            }
+        });
+
+        //main game functionality
+        //player controls        
+        gameProperties.cursors = this.input.keyboard.createCursorKeys();
+        gameProperties.pointer = this.input.activePointer;
+
+
 
         //pass the properties and game objects to the next scene
         this.scene.launch(SCENES.STARTMENU, gameProperties);
