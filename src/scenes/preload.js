@@ -15,6 +15,7 @@ export class preloadScene extends Phaser.Scene {
         this.load.image('ground', '../src/assets/ground.png');
         this.load.image('copyright', '../src/assets/Copyright.png');
         this.load.image('scoreZone', '../src/assets/score-zone.png');
+        this.load.image('pedZone', '../src/assets/score-zone.png');
         this.load.image('pause', '../src/assets/Pause-Button.png');
         this.load.image('soundOn', '../src/assets/sound_btn.png');
         this.load.image('soundOff', '../src/assets/sound_mute_btn.png');
@@ -155,6 +156,14 @@ export class preloadScene extends Phaser.Scene {
                     { fontFamily: "dogicapixel", fontSize: '64px', fill: '#FFF' }
                 ).setScale(userDevice.heightScale);
             },
+            createWalkingAnim: (pedId, anims) => {
+                return {
+                    key: `walking${pedId}`,
+                    frames: anims.generateFrameNumbers(`ped${pedId}`, { start: 1, end: 8 }),
+                    frameRate: 8,
+                    repeat: -1
+                }
+            },
             //game props
             muted: false,
             score: 0,
@@ -171,6 +180,9 @@ export class preloadScene extends Phaser.Scene {
             },
             gameObjects: {
                 //populated below using methods in this object
+            },
+            animations: {
+
             },
             colliders: {
                 //populated below using methods in this object
@@ -195,6 +207,171 @@ export class preloadScene extends Phaser.Scene {
             .setOrigin(0)
             .refreshBody()
         ;
+
+        //invisible to the player, but adds points when touched by ped
+        gameProperties.gameObjects.scoreZone = this.physics.add.sprite(
+            (userDevice.width * 0.1), 
+            (userDevice.height * 0.7), 
+            'scoreZone'
+        ).setScale(userDevice.heightScale);
+
+        //invisible to the player; peds will spawn at these locations
+        gameProperties.gameObjects.pedZone1 = this.physics.add.sprite(
+            (userDevice.width * 0.9), 
+            (userDevice.height * 0.7), 
+            'pedZone'
+        ).setScale(userDevice.heightScale);
+
+        gameProperties.gameObjects.pedZone2 = this.physics.add.sprite(
+            (userDevice.width * 1.2), 
+            (userDevice.height * 0.7), 
+            'pedZone'
+        ).setScale(userDevice.heightScale);
+
+        gameProperties.gameObjects.pedZone3 = this.physics.add.sprite(
+            (userDevice.width * 1.3), 
+            (userDevice.height * 0.7), 
+            'pedZone'
+        ).setScale(userDevice.heightScale);
+
+
+        //player, peds, and obstacles
+        gameProperties.gameObjects.player = this.physics.add.sprite(
+            gameProperties.gameObjects.scoreZone.x, 
+            gameProperties.gameObjects.scoreZone.y,
+            'player'
+        ).setCollideWorldBounds(true)
+        .setScale(userDevice.heightScale)
+        //.setVisible(false);
+
+        //sets up peds group and creates first one
+        gameProperties.gameObjects.peds = this.physics.add.group();
+
+        //add roll function afterward
+        const firstPed = 'ped1'
+        gameProperties.gameObjects.ped = gameProperties.gameObjects.peds.create(
+            gameProperties.gameObjects.pedZone1.x, 
+            gameProperties.gameObjects.pedZone1.y, 
+            firstPed
+        ).setScale(userDevice.heightScale);
+
+        
+        gameProperties.gameObjects.clouds = this.physics.add.group();
+
+
+        //sprite "boxes" are larger than the sprite, so we resize them
+        gameProperties.gameObjects.hitBoxHeight = gameProperties.gameObjects.player.body.height * 0.7;
+        gameProperties.gameObjects.hitBoxWidth = gameProperties.gameObjects.player.body.width * 0.25;
+
+        gameProperties.gameObjects.player.body.setSize(
+            gameProperties.gameObjects.hitBoxWidth, 
+            gameProperties.gameObjects.hitBoxHeight, 
+            true
+        );
+
+        gameProperties.gameObjects.ped.body.setSize(
+            gameProperties.gameObjects.hitBoxWidth, 
+            gameProperties.gameObjects.hitBoxHeight, 
+            true
+        );
+
+        //=== animations ===
+        //pedestrian walking animations
+        for(let i=1; i<=25; i++) {
+            const thisKey = `walking${i}`;
+            gameProperties.animations[thisKey] = this.anims.create(
+                gameProperties.createWalkingAnim(i, this.anims)
+            );
+        }
+
+        gameProperties.animations.running = this.anims.create({
+            key: 'running',
+            frames: this.anims.generateFrameNumbers('player', { start: 0, end: 8 }),
+            frameRate: 16,
+            repeat: -1
+        });
+
+        gameProperties.animations.jumping = this.anims.create({
+            key: 'jumping',
+            frames: this.anims.generateFrameNumbers('player', { start: 9, end: 12 }),
+            frameRate: 20
+        });
+
+        gameProperties.animations.falling = this.anims.create({
+            key: 'falling',
+            frames: this.anims.generateFrameNumbers('player', { start: 13, end: 15 }),
+            frameRate: 5,
+            repeat: 1
+        });
+
+        gameProperties.animations.cloudIdle = this.anims.create({
+            key: 'cloudIdle',
+            frames: this.anims.generateFrameNumbers('cloud', { start: 0, end: 2 }),
+            frameRate: 3,
+            repeat: -1
+        });
+
+        gameProperties.animations.gg = this.anims.create({
+            key: 'gg',
+            frames: this.anims.generateFrameNumbers('player', { start: 18, end: 23 }),
+            frameRate: 4
+        });
+
+        //=== colliders ===
+        gameProperties.colliders.scoreZoneGround = this.physics.add.collider(
+            gameProperties.gameObjects.scoreZone, 
+            gameProperties.gameObjects.ground
+        );
+        gameProperties.colliders.pedZone1Ground = this.physics.add.collider(
+            gameProperties.gameObjects.pedZone1, 
+            gameProperties.gameObjects.ground
+        );
+        gameProperties.colliders.pedZone2Ground = this.physics.add.collider(
+            gameProperties.gameObjects.pedZone2, 
+            gameProperties.gameObjects.ground
+        );
+        gameProperties.colliders.pedZone3Ground = this.physics.add.collider(
+            gameProperties.gameObjects.pedZone3, 
+            gameProperties.gameObjects.ground
+        );
+        gameProperties.colliders.playerGround = this.physics.add.collider(
+            gameProperties.gameObjects.player, 
+            gameProperties.gameObjects.ground
+        );
+        gameProperties.colliders.pedsGround = this.physics.add.collider(
+            gameProperties.gameObjects.peds, 
+            gameProperties.gameObjects.ground
+        );
+
+        //overlaps that affect the game
+        // gameProperties.colliders.scoreCollider = this.physics.add.overlap(
+        //     gameProperties.gameObjects.scoreZone, 
+        //     gameProperties.gameObjects.peds, 
+        //     addScore, 
+        //     null, 
+        //     this
+        // );
+        // gameProperties.colliders.pedCollider = this.physics.add.overlap(
+        //     gameProperties.gameObjects.player, 
+        //     gameProperties.gameObjects.peds, 
+        //     contact, 
+        //     null, 
+        //     this
+        // );
+        // gameProperties.colliders.pedCollider = this.physics.add.overlap(
+        //     gameProperties.gameObjects.player, 
+        //     gameProperties.gameObjects.peds, 
+        //     contact, 
+        //     null, 
+        //     this
+        // );
+        // gameProperties.colliders.cloudCollider = this.physics.add.overlap(
+        //     gameProperties.gameObjects.player, 
+        //     gameProperties.gameObjects.clouds, 
+        //     contact, 
+        //     null, 
+        //     this
+        // );
 
         //=== start menu section ===
         //"Social Distance Jumper"

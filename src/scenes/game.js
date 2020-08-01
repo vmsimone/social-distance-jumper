@@ -70,134 +70,77 @@ export class gameScene extends Phaser.Scene {
             widthRatio: 0.05,
             heightRatio: 0.05
         });
-        
-        //invisible to the player, but adds points when touched by ped
-        scoreZone = this.physics.add.sprite((gameProperties.width * 0.1), (gameProperties.height * 0.9 - 50), 'scoreZone').setScale(gameProperties.heightScale);
 
-        //sets up player properties
-        player = this.physics.add.sprite((gameProperties.width * 0.1), (gameProperties.height * 0.9 - 50), 'player');
-        player.setCollideWorldBounds(true);
-        player.setScale(gameProperties.heightScale);
-
-        //sprite "boxes" are larger than the sprite, so we resize them
-        hitBoxHeight = player.body.height * 0.7;
-        hitBoxWidth = player.body.width * 0.25;
-
-        player.body.setSize(hitBoxWidth, hitBoxHeight, true);
-
-        //sets up peds group and creates first one
-        peds = this.physics.add.group();
-
-        const firstPed = `ped${randomPedNumber()}`;
-        ped = peds.create((gameProperties.width * 1.2), (gameProperties.height * 0.9 - 50), firstPed);
-        ped.setScale(gameProperties.heightScale);
-        ped.masked = true;
-        ped.body.setSize(hitBoxWidth, hitBoxHeight, true);
-        ped.setVelocityX(pedSpeed);
+        gameProperties.gameObjects.player.setVisible(true);
+        // ped.setScale(gameProperties.heightScale);
+        // ped.masked = true;
+        // ped.body.setSize(hitBoxWidth, hitBoxHeight, true);
+        // ped.setVelocityX(pedSpeed);
+        gameProperties.gameObjects.ped.setVelocityX(pedSpeed);
 
         //sets up virus cloud
-        clouds = this.physics.add.group();
 
-        //pedestrian walking animations
-        for(let i=1; i<=25; i++) {
-            this.anims.create(createWalkingAnim(i, this.anims));
-        }
+        gameProperties.gameObjects.ped.anims.play('walking1');
 
-        this.anims.create({
-            key: 'running',
-            frames: this.anims.generateFrameNumbers('player', { start: 0, end: 8 }),
-            frameRate: 16,
-            repeat: -1
-        });
 
-        this.anims.create({
-            key: 'jumping',
-            frames: this.anims.generateFrameNumbers('player', { start: 9, end: 12 }),
-            frameRate: 20
-        });
-
-        this.anims.create({
-            key: 'falling',
-            frames: this.anims.generateFrameNumbers('player', { start: 13, end: 15 }),
-            frameRate: 5,
-            repeat: 1
-        });
-
-        this.anims.create({
-            key: 'virusCloud',
-            frames: this.anims.generateFrameNumbers('cloud', { start: 0, end: 2 }),
-            frameRate: 3,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'gg',
-            frames: this.anims.generateFrameNumbers('player', { start: 18, end: 23 }),
-            frameRate: 4
-        });
-
-        ped.anims.play('walking1');
-
-        this.physics.add.collider(scoreZone, ground);
-        this.physics.add.collider(player, ground);
-        this.physics.add.collider(peds, ground);
-
-        scoreCollider = this.physics.add.overlap(scoreZone, peds, addScore, null, this);
-        pedCollider = this.physics.add.overlap(player, peds, contact, null, this);
-        cloudCollider = this.physics.add.overlap(player, clouds, contact, null, this);
     }
 
     update() {
-        if (player.infected === true) {
-            player.anims.play('gg', true);
-            let animOver = player.anims.getProgress();
-            if(animOver == 1) {
-                runGameOver(this.scene);
-            }
-        } else {
-            if (player.body.touching.down === false) {
-                player.anims.play('falling');
-            } else {
-                player.setVelocityX(0);
-                player.anims.play('running', true);
-            }
+        // if (gameProperties.gameObjects.player.infected === true) {
+        //     gameProperties.gameObjects.player.anims.play('gg', true);
+        //     let animOver = player.anims.getProgress();
+        //     if(animOver == 1) {
+        //         runGameOver(this.scene);
+        //     }
+        // } else {
+        //     if (gameProperties.gameObjects.player.body.touching.down === false) {
+        //         gameProperties.gameObjects.player.anims.play('falling');
+        //     } else {
+        //         gameProperties.gameObjects.player.setVelocityX(0);
+        //         gameProperties.gameObjects.player.anims.play('running', true);
+        //     }
       
-            if ((gameProperties.cursors.space.isDown || gameProperties.cursors.up.isDown || gameProperties.pointer.isDown) && player.body.touching.down) {
-                if(!gameProperties.muted) {
-                    //jumpSFX.play();
-                }
-                player.setVelocityY(gameProperties.height * -1);
-            }
+        //     if (
+        //         (gameProperties.cursors.space.isDown || 
+        //             gameProperties.cursors.up.isDown || 
+        //             gameProperties.pointer.isDown) && 
+        //             gameProperties.gameObjects.player.body.touching.down
+        //         ) {
+        //         if(!gameProperties.muted) {
+        //             //jumpSFX.play();
+        //         }
+        //         gameProperties.gameObjects.player.setVelocityY(gameProperties.height * -1);
+        //     }
             
-            sneezeChance = rollRandomNumber();
-            if(sneezeChance > 985) {
-                //if statements make sure there are
-                //peds to sneeze/cough
-                //no floating virus clouds
-                if(ped && ped.body && ped.body.touching.down) {
-                    pedSneeze(ped);
-                } 
-                if(newped && newped.body && newped.body.touching.down) {
-                    pedSneeze(newped);
-                }
-            } else if(sneezeChance < 30) {
-                if(ped && ped.body && ped.body.touching.down) {
-                    pedCough(ped);
-                } 
-                if(newped && newped.body && newped.body.touching.down) {
-                    pedCough(newped);
-                }
-            }
+        //     sneezeChance = rollRandomNumber();
+        //     if(sneezeChance > 985) {
+        //         //if statements make sure there are
+        //         //peds to sneeze/cough
+        //         //no floating virus clouds
+        //         if(ped && ped.body && ped.body.touching.down) {
+        //             pedSneeze(ped);
+        //         } 
+        //         if(newped && newped.body && newped.body.touching.down) {
+        //             pedSneeze(newped);
+        //         }
+        //     } else if(sneezeChance < 30) {
+        //         if(ped && ped.body && ped.body.touching.down) {
+        //             pedCough(ped);
+        //         } 
+        //         if(newped && newped.body && newped.body.touching.down) {
+        //             pedCough(newped);
+        //         }
+        //     }
       
-            if(gameProperties.score / 10 == level) {
-                level++;
-                pedSpeed -= (100 * gameProperties.widthScale)
-            }
+        //     if(gameProperties.score / 10 == level) {
+        //         level++;
+        //         pedSpeed -= (100 * gameProperties.widthScale)
+        //     }
       
             gameProperties.background.bg.tilePositionX += 0.5;
             gameProperties.background.mg.tilePositionX += 2.5;
             gameProperties.background.fg.tilePositionX += 3.75;
-        }
+        //}
     }
 };
       
@@ -295,15 +238,6 @@ function contact(player, _ped) {
     }
 
     player.infected = true;
-}
-
-function createWalkingAnim(pedId, anims) {
-    return {
-        key: `walking${pedId}`,
-        frames: anims.generateFrameNumbers(`ped${pedId}`, { start: 1, end: 8 }),
-        frameRate: 8,
-        repeat: -1
-    }
 }
 
 function runGameOver(scene) {
