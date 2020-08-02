@@ -156,11 +156,6 @@ export class preloadScene extends Phaser.Scene {
                     { fontFamily: "dogicapixel", fontSize: '64px', fill: '#FFF' }
                 ).setScale(userDevice.heightScale);
             },
-            addCharacter: (sprite, zone) => {
-                return gameProperties.gameObjects.peds.create(
-                    zone.x, zone.y, sprite
-                ).setScale(userDevice.heightScale);
-            },
             createWalkingAnim: (pedId, anims) => {
                 return {
                     key: `walking${pedId}`,
@@ -169,13 +164,38 @@ export class preloadScene extends Phaser.Scene {
                     repeat: -1
                 }
             },
+            increaseScore: () => {
+                const frontmostPed = gameProperties.activePeds[gameProperties.activePeds.length - 1];
+                console.log('score increased');
+                gameProperties.score += 1;
+                gameProperties.scoreText.setText(gameProperties.score);
+
+                //we want to remove this ped's collider immediately, so they're only scored once
+                //we also don't want them to fall through the ground
+                frontmostPed.body.setAllowGravity(false);
+                gameProperties.gameObjects.peds.remove(frontmostPed);
+                gameProperties.activePeds.pop();
+
+                //add new ped to the array
+                gameProperties.activePeds.unshift(
+                    gameProperties.addRandomPed()
+                );
+                
+                //level up
+                if(gameProperties.score / 10 == gameProperties.level) {
+                    gameProperties.level++;
+                    gameProperties.pedSpeed -= (10 * userDevice.widthScale)
+                }
+            },
             //game props
+            spriteScale: userDevice.heightScale,
             muted: false,
             score: 0,
             highScore: 0,
             level: 1,
-            pedSpeed: -300 * userDevice.widthScale,
             jumpVelocity: -1 * userDevice.height,
+            activePeds: [],
+            pedSpeed: -300 * userDevice.widthScale,
             background: {
                 //populated below using methods in this object
             },
@@ -241,7 +261,6 @@ export class preloadScene extends Phaser.Scene {
             'pedZone'
         ).setScale(userDevice.heightScale);
 
-
         //player, peds, and obstacles
         gameProperties.gameObjects.player = this.physics.add.sprite(
             gameProperties.gameObjects.scoreZone.x, 
@@ -250,30 +269,22 @@ export class preloadScene extends Phaser.Scene {
         ).setCollideWorldBounds(true)
         .setScale(userDevice.heightScale)
         .setVisible(false);
+        console.log('player height:' + gameProperties.gameObjects.player.height)
 
-        //sets up peds group and creates first one
-        gameProperties.gameObjects.peds = this.physics.add.group();
-
-        //add roll function afterward
-        gameProperties.gameObjects.ped = gameProperties.addCharacter(
-            'ped1', gameProperties.gameObjects.pedZone1
-        );
+        //sets up peds group
+        gameProperties.gameObjects.peds = this.physics.add.group({
+            setScale: { x: userDevice.widthScale, y: userDevice.heightScale }
+        });
+        console.log(gameProperties.gameObjects.peds.setScale);
         
-        //sets up cloud obstacle
+        //sets up cloud group
         gameProperties.gameObjects.clouds = this.physics.add.group();
-
 
         //sprite "boxes" are larger than the sprite, so we resize them
         gameProperties.gameObjects.hitBoxHeight = gameProperties.gameObjects.player.body.height * 0.7;
         gameProperties.gameObjects.hitBoxWidth = gameProperties.gameObjects.player.body.width * 0.25;
 
         gameProperties.gameObjects.player.body.setSize(
-            gameProperties.gameObjects.hitBoxWidth, 
-            gameProperties.gameObjects.hitBoxHeight, 
-            true
-        );
-
-        gameProperties.gameObjects.ped.body.setSize(
             gameProperties.gameObjects.hitBoxWidth, 
             gameProperties.gameObjects.hitBoxHeight, 
             true
@@ -345,6 +356,14 @@ export class preloadScene extends Phaser.Scene {
         gameProperties.colliders.pedsGround = this.physics.add.collider(
             gameProperties.gameObjects.peds, 
             gameProperties.gameObjects.ground
+        );
+        //overlaps
+        gameProperties.scoreCollider = this.physics.add.overlap(
+            gameProperties.gameObjects.scoreZone, 
+            gameProperties.gameObjects.peds, 
+            gameProperties.increaseScore,
+            null,
+            this
         );
 
         //=== start menu section ===
@@ -419,3 +438,21 @@ export class preloadScene extends Phaser.Scene {
         this.scene.launch(SCENES.STARTMENU, gameProperties);
     }
 }
+
+// function addScore() {
+//     console.log('scored');
+//     console.log(gameProperties.gameObjects.ped);
+//     if (ped.scored == undefined) {
+//         gameProperties.score += 1;
+//         gameProperties.scoreText.setText(gameProperties.score);
+  
+//         gameProperties.addRandomPed();
+  
+//         gameProperties.gameObjects.ped.scored = true;
+      
+//         if(gameProperties.score / 10 == level) {
+//             gameProperties.level++;
+//             gameProperties.pedSpeed -= (100 * gameProperties.widthScale)
+//         }
+//     }
+// }
