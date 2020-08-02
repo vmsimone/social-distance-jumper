@@ -9,18 +9,19 @@ export class pausedScene extends Phaser.Scene {
         });
     }
 
-    init(data) {
+    init() {
         console.log('game paused');
-        this.input.once('pointerdown', () => {
-            screenDarken.destroy();
-            this.scene.resume(SCENES.GAME);
-        }, this);
     }
 
     create() {
         //images all scaled to fit 1080 x 1920
         const gameHeight = this.game.renderer.height;
         const gameHeightScale = gameHeight / 1920;
+        
+        this.input.once('pointerdown', () => {
+            screenDarken.destroy();
+            this.scene.resume(SCENES.GAME);
+        }, this);
 
         screenDarken = this.add.image(0, 0, "screenDarken").setDepth(1).setOrigin(0).setScale(gameHeightScale);
     }

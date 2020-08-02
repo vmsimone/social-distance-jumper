@@ -156,6 +156,11 @@ export class preloadScene extends Phaser.Scene {
                     { fontFamily: "dogicapixel", fontSize: '64px', fill: '#FFF' }
                 ).setScale(userDevice.heightScale);
             },
+            addCharacter: (sprite, zone) => {
+                return gameProperties.gameObjects.peds.create(
+                    zone.x, zone.y, sprite
+                ).setScale(userDevice.heightScale);
+            },
             createWalkingAnim: (pedId, anims) => {
                 return {
                     key: `walking${pedId}`,
@@ -169,6 +174,8 @@ export class preloadScene extends Phaser.Scene {
             score: 0,
             highScore: 0,
             level: 1,
+            pedSpeed: -300 * userDevice.widthScale,
+            jumpVelocity: -1 * userDevice.height,
             background: {
                 //populated below using methods in this object
             },
@@ -242,20 +249,17 @@ export class preloadScene extends Phaser.Scene {
             'player'
         ).setCollideWorldBounds(true)
         .setScale(userDevice.heightScale)
-        //.setVisible(false);
+        .setVisible(false);
 
         //sets up peds group and creates first one
         gameProperties.gameObjects.peds = this.physics.add.group();
 
         //add roll function afterward
-        const firstPed = 'ped1'
-        gameProperties.gameObjects.ped = gameProperties.gameObjects.peds.create(
-            gameProperties.gameObjects.pedZone1.x, 
-            gameProperties.gameObjects.pedZone1.y, 
-            firstPed
-        ).setScale(userDevice.heightScale);
-
+        gameProperties.gameObjects.ped = gameProperties.addCharacter(
+            'ped1', gameProperties.gameObjects.pedZone1
+        );
         
+        //sets up cloud obstacle
         gameProperties.gameObjects.clouds = this.physics.add.group();
 
 
@@ -343,36 +347,6 @@ export class preloadScene extends Phaser.Scene {
             gameProperties.gameObjects.ground
         );
 
-        //overlaps that affect the game
-        // gameProperties.colliders.scoreCollider = this.physics.add.overlap(
-        //     gameProperties.gameObjects.scoreZone, 
-        //     gameProperties.gameObjects.peds, 
-        //     addScore, 
-        //     null, 
-        //     this
-        // );
-        // gameProperties.colliders.pedCollider = this.physics.add.overlap(
-        //     gameProperties.gameObjects.player, 
-        //     gameProperties.gameObjects.peds, 
-        //     contact, 
-        //     null, 
-        //     this
-        // );
-        // gameProperties.colliders.pedCollider = this.physics.add.overlap(
-        //     gameProperties.gameObjects.player, 
-        //     gameProperties.gameObjects.peds, 
-        //     contact, 
-        //     null, 
-        //     this
-        // );
-        // gameProperties.colliders.cloudCollider = this.physics.add.overlap(
-        //     gameProperties.gameObjects.player, 
-        //     gameProperties.gameObjects.clouds, 
-        //     contact, 
-        //     null, 
-        //     this
-        // );
-
         //=== start menu section ===
         //"Social Distance Jumper"
         gameProperties.background.title = gameProperties.addImage(this, {
@@ -394,6 +368,12 @@ export class preloadScene extends Phaser.Scene {
             widthRatio: 0.5,
             heightRatio: 0.95
         });
+        
+        //=== sounds ===
+        //jumpSFX = this.sound.add('jumpSound');
+        // sneezeSFX = this.sound.add('sneezeSound');
+        // coughSFX = this.sound.add('coughSound');
+        //gameOverSFX = this.sound.add('gameOverSound');
 
         //=== ui buttons ===
         //pause
@@ -431,12 +411,9 @@ export class preloadScene extends Phaser.Scene {
             }
         });
 
-        //main game functionality
         //player controls        
         gameProperties.cursors = this.input.keyboard.createCursorKeys();
         gameProperties.pointer = this.input.activePointer;
-
-
 
         //pass the properties and game objects to the next scene
         this.scene.launch(SCENES.STARTMENU, gameProperties);

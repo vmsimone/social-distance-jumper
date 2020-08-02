@@ -14,6 +14,8 @@ export class getReadyScene extends Phaser.Scene {
     }
 
     create() {
+        gameProperties.gameObjects.player.setVisible(true);
+        
         const getReady = gameProperties.addImage(this, {
             name: "getReady",
             widthRatio: 0.5,
