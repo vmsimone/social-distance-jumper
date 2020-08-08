@@ -177,14 +177,29 @@ export class preloadScene extends Phaser.Scene {
                 gameProperties.activePeds.pop();
 
                 //add new ped to the array
-                gameProperties.activePeds.unshift(
-                    gameProperties.addRandomPed()
-                );
+                gameProperties.activatePed();
                 
                 //level up
                 if(gameProperties.score / 10 == gameProperties.level) {
                     gameProperties.level++;
-                    gameProperties.pedSpeed -= (10 * userDevice.widthScale)
+                    gameProperties.pedSpeed -= (10 * userDevice.widthScale);
+                }
+            },
+            contact: () => {
+                this.physics.world.removeCollider(gameProperties.colliders.pedCollider);
+                this.physics.world.removeCollider(gameProperties.colliders.cloudCollider);
+                this.physics.world.removeCollider(gameProperties.colliders.scoreCollider);
+    
+                gameProperties.gameObjects.player.isRunning = true;
+    
+                if(!gameProperties.muted) {
+                    //gameOverSFX.play();
+                }
+    
+                gameProperties.gameObjects.player.anims.play('gg', true);
+                let animOver = gameProperties.gameObjects.player.anims.getProgress();
+                if(animOver == 1) {
+                    scene.launch(SCENES.GAMEOVER, { "gameScore": gameProperties.score, "highScore": highScore });
                 }
             },
             //game props
@@ -196,6 +211,7 @@ export class preloadScene extends Phaser.Scene {
             jumpVelocity: -1 * userDevice.height,
             activePeds: [],
             pedSpeed: -300 * userDevice.widthScale,
+            maxPedSpeed: -500 * userDevice.widthScale, //more like minimum, but right-to-left
             background: {
                 //populated below using methods in this object
             },
@@ -272,9 +288,15 @@ export class preloadScene extends Phaser.Scene {
         console.log('player height:' + gameProperties.gameObjects.player.height)
 
         //sets up peds group
-        gameProperties.gameObjects.peds = this.physics.add.group({
-            setScale: { x: userDevice.widthScale, y: userDevice.heightScale }
-        });
+        gameProperties.gameObjects.peds = this.physics.add.group(
+            // {
+            // setScale: { x: userDevice.widthScale, y: userDevice.heightScale }
+            // }
+        );
+        gameProperties.gameObjects.peds.createCallback = (e) => {
+            console.log('callback:');
+            console.log(e);
+        }
         console.log(gameProperties.gameObjects.peds.setScale);
         
         //sets up cloud group
@@ -357,12 +379,33 @@ export class preloadScene extends Phaser.Scene {
             gameProperties.gameObjects.peds, 
             gameProperties.gameObjects.ground
         );
-        //overlaps
+        //overlaps for scoring and gameover
         gameProperties.scoreCollider = this.physics.add.overlap(
             gameProperties.gameObjects.scoreZone, 
             gameProperties.gameObjects.peds, 
             gameProperties.increaseScore,
             null,
+            this
+        );
+        gameProperties.colliders.pedCollider = this.physics.add.overlap(
+            gameProperties.gameObjects.player, 
+            gameProperties.gameObjects.peds, 
+            gameProperties.contact, 
+            null, 
+            this
+        );
+        gameProperties.colliders.pedCollider = this.physics.add.overlap(
+            gameProperties.gameObjects.player, 
+            gameProperties.gameObjects.peds, 
+            gameProperties.contact, 
+            null, 
+            this
+        );
+        gameProperties.colliders.cloudCollider = this.physics.add.overlap(
+            gameProperties.gameObjects.player, 
+            gameProperties.gameObjects.clouds, 
+            gameProperties.contact, 
+            null, 
             this
         );
 

@@ -41,16 +41,27 @@ export class gameScene extends Phaser.Scene {
             
             const randomPed = `ped${randomPedNum}`;
             const randomZone = `pedZone${Phaser.Math.Between(1, 3)}`;
-            const zone = gameProperties.gameObjects['pedZone1']; //randomZone];
-
-            //set up our new ped's properties
+            const zone = gameProperties.gameObjects[randomZone];
+            
             let newped; 
-            newped = gameProperties.gameObjects.peds.create(
-                zone.x, zone.y, randomPed
-            )
-            console.log('ped height (pre-scale):' + gameProperties.gameObjects.player.height)
-            newped.setScale(gameProperties.spriteScale);
-            console.log('ped height (post-scale):' + gameProperties.gameObjects.player.height)
+            //the first ped is different for some reason so we have to do this nonsense
+            console.log(gameProperties.score);
+            if(gameProperties.score == 0) {
+                //set up our new ped's properties
+                newped = gameProperties.gameObjects.peds.create(
+                    zone.x, 
+                    zone.y, 
+                    randomPed
+                ).setScale(gameProperties.spriteScale);
+            } else {
+                //set up our new ped's properties
+                newped = gameProperties.gameObjects.peds.create(
+                    zone.x + (gameProperties.spriteScale * 384), 
+                    zone.y + (gameProperties.spriteScale * 384), 
+                    randomPed
+                ).setScale(gameProperties.spriteScale);
+            }
+            
             newped.body.setSize(
                 gameProperties.gameObjects.hitBoxWidth, 
                 gameProperties.gameObjects.hitBoxHeight, 
@@ -70,6 +81,12 @@ export class gameScene extends Phaser.Scene {
             );
 
             return newped;
+        }
+
+        gameProperties.activatePed = () => {
+            gameProperties.activePeds.unshift(
+                gameProperties.addRandomPed()
+            );
         }
 
         // function increaseScore() {
@@ -122,42 +139,16 @@ export class gameScene extends Phaser.Scene {
         });
         
         //add first pedestrian to the scene and puts them in the active peds array
-        gameProperties.activePeds.unshift(
-            gameProperties.addRandomPed()
-        );
-        console.log(gameProperties.activePeds);
+        gameProperties.activatePed();
 
         //overlaps that affect the game; callback functions listed after update()
-        gameProperties.colliders.scoreCollider = this.physics.add.overlap(
-            gameProperties.gameObjects.scoreZone, 
-            gameProperties.gameObjects.peds, 
-            addScore,
-            null, 
-            this
-        );
-        gameProperties.colliders.pedCollider = this.physics.add.overlap(
-            gameProperties.gameObjects.player, 
-            gameProperties.gameObjects.peds, 
-            contact, 
-            null, 
-            this
-        );
-        gameProperties.colliders.pedCollider = this.physics.add.overlap(
-            gameProperties.gameObjects.player, 
-            gameProperties.gameObjects.peds, 
-            contact, 
-            null, 
-            this
-        );
-        gameProperties.colliders.cloudCollider = this.physics.add.overlap(
-            gameProperties.gameObjects.player, 
-            gameProperties.gameObjects.clouds, 
-            contact, 
-            null, 
-            this
-        );
-
-        console.log(gameProperties.colliders);
+        // gameProperties.colliders.scoreCollider = this.physics.add.overlap(
+        //     gameProperties.gameObjects.scoreZone, 
+        //     gameProperties.gameObjects.peds, 
+        //     addScore,
+        //     null, 
+        //     this
+        // );
     }
 
     update() {
@@ -240,7 +231,6 @@ function pedCough(ped) {
 
 function addScore() {
     console.log('scored');
-    console.log(gameProperties.gameObjects.ped);
     if (ped.scored == undefined) {
         gameProperties.score += 1;
         gameProperties.scoreText.setText(gameProperties.score);
@@ -285,26 +275,4 @@ function createNewPed() {
 function randomPedNumber() {
     let num = Phaser.Math.Between(1, 25);
     return num;
-}
-
-function contact(player, _ped) {
-    this.physics.world.removeCollider(gameProperties.colliders.pedCollider);
-    this.physics.world.removeCollider(gameProperties.colliders.cloudCollider);
-    this.physics.world.removeCollider(gameProperties.colliders.scoreCollider);
-
-    player.isRunning = true;
-
-    if(!gameProperties.muted) {
-        //gameOverSFX.play();
-    }
-
-    player.anims.play('gg', true);
-    let animOver = player.anims.getProgress();
-    if(animOver == 1) {
-        runGameOver(this.scene);
-    }
-}
-
-function runGameOver(scene) {
-    scene.start(SCENES.GAMEOVER, { "gameScore": gameProperties.score, "highScore": highScore });
 }
