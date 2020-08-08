@@ -186,11 +186,12 @@ export class preloadScene extends Phaser.Scene {
                 }
             },
             contact: () => {
+                console.log('CONTACT')
                 this.physics.world.removeCollider(gameProperties.colliders.pedCollider);
                 this.physics.world.removeCollider(gameProperties.colliders.cloudCollider);
                 this.physics.world.removeCollider(gameProperties.colliders.scoreCollider);
     
-                gameProperties.gameObjects.player.isRunning = true;
+                gameProperties.gameObjects.player.isDown = true;
     
                 if(!gameProperties.muted) {
                     //gameOverSFX.play();
@@ -279,25 +280,15 @@ export class preloadScene extends Phaser.Scene {
 
         //player, peds, and obstacles
         gameProperties.gameObjects.player = this.physics.add.sprite(
-            gameProperties.gameObjects.scoreZone.x, 
+            gameProperties.gameObjects.scoreZone.x + 5, 
             gameProperties.gameObjects.scoreZone.y,
             'player'
         ).setCollideWorldBounds(true)
         .setScale(userDevice.heightScale)
         .setVisible(false);
-        console.log('player height:' + gameProperties.gameObjects.player.height)
 
         //sets up peds group
-        gameProperties.gameObjects.peds = this.physics.add.group(
-            // {
-            // setScale: { x: userDevice.widthScale, y: userDevice.heightScale }
-            // }
-        );
-        gameProperties.gameObjects.peds.createCallback = (e) => {
-            console.log('callback:');
-            console.log(e);
-        }
-        console.log(gameProperties.gameObjects.peds.setScale);
+        gameProperties.gameObjects.peds = this.physics.add.group();
         
         //sets up cloud group
         gameProperties.gameObjects.clouds = this.physics.add.group();
@@ -380,18 +371,11 @@ export class preloadScene extends Phaser.Scene {
             gameProperties.gameObjects.ground
         );
         //overlaps for scoring and gameover
-        gameProperties.scoreCollider = this.physics.add.overlap(
+        gameProperties.colliders.scoreCollider = this.physics.add.overlap(
             gameProperties.gameObjects.scoreZone, 
             gameProperties.gameObjects.peds, 
             gameProperties.increaseScore,
             null,
-            this
-        );
-        gameProperties.colliders.pedCollider = this.physics.add.overlap(
-            gameProperties.gameObjects.player, 
-            gameProperties.gameObjects.peds, 
-            gameProperties.contact, 
-            null, 
             this
         );
         gameProperties.colliders.pedCollider = this.physics.add.overlap(

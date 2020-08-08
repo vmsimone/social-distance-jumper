@@ -2,8 +2,6 @@ import { SCENES } from "../sceneHandler.js";
 
 let gameProperties;
 
-let scoreCollider;
-
 let highScore;
 let level;
 let pedSpeed; //peds move right to left
@@ -45,7 +43,6 @@ export class gameScene extends Phaser.Scene {
             
             let newped; 
             //the first ped is different for some reason so we have to do this nonsense
-            console.log(gameProperties.score);
             if(gameProperties.score == 0) {
                 //set up our new ped's properties
                 newped = gameProperties.gameObjects.peds.create(
@@ -153,29 +150,28 @@ export class gameScene extends Phaser.Scene {
 
     update() {
         //scroll the parallax background while player in motion
-        if (gameProperties.gameObjects.player.isRunning != true) {
+        if (gameProperties.gameObjects.player.isDown != true) {
             gameProperties.background.bg.tilePositionX += 0.5;
             gameProperties.background.mg.tilePositionX += 2.5;
             gameProperties.background.fg.tilePositionX += 3.75;
-        }
 
-        if (gameProperties.gameObjects.player.body.touching.down === false) {
-            gameProperties.gameObjects.player.anims.play('falling');
-        } else {
-            gameProperties.gameObjects.player.anims.play('running', true);
-        }
-    
-        if (
-            (gameProperties.cursors.space.isDown || gameProperties.pointer.isDown) 
-            && 
-            gameProperties.gameObjects.player.body.touching.down
-        ) {
-            if(!gameProperties.muted) {
-                //jumpSFX.play();
+            if (gameProperties.gameObjects.player.body.touching.down === false) {
+                gameProperties.gameObjects.player.anims.play('falling');
+            } else {
+                gameProperties.gameObjects.player.anims.play('running', true);
             }
-            gameProperties.gameObjects.player.setVelocityY(gameProperties.jumpVelocity);
-        }
     
+            if (
+                (gameProperties.cursors.space.isDown || gameProperties.pointer.isDown) 
+                && 
+                gameProperties.gameObjects.player.body.touching.down
+            ) {
+                if(!gameProperties.muted) {
+                    //jumpSFX.play();
+                }
+                gameProperties.gameObjects.player.setVelocityY(gameProperties.jumpVelocity);
+            }
+        }
     }
 };
 
