@@ -24,7 +24,7 @@ let game = new Phaser.Game({
       default: 'arcade',
       arcade: {
           gravity: { y: (window.innerHeight * 2) },
-          debug: true
+          debug: false
       }
   },
   scene: [

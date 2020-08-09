@@ -16,6 +16,7 @@ export class preloadScene extends Phaser.Scene {
         this.load.image('copyright', '../src/assets/Copyright.png');
         this.load.image('scoreZone', '../src/assets/score-zone.png');
         this.load.image('pedZone', '../src/assets/score-zone.png');
+        this.load.image('coughZone', '../src/assets/cough-zone.png');
         this.load.image('pause', '../src/assets/Pause-Button.png');
         this.load.image('soundOn', '../src/assets/sound_btn.png');
         this.load.image('soundOff', '../src/assets/sound_mute_btn.png');
@@ -45,6 +46,12 @@ export class preloadScene extends Phaser.Scene {
             'cloud', 
             '../src/assets/sprites/cloud.png',
             { frameWidth: 192, frameHeight: 192 }
+        );
+
+        this.load.spritesheet(
+            'drone', 
+            '../src/assets/sprites/drone.png',
+            { frameWidth: 256, frameHeight: 256 }
         );
 
         //there should be a better way to do this but idk
@@ -233,7 +240,7 @@ export class preloadScene extends Phaser.Scene {
                     const coinFlip = Phaser.Math.Between(1, 100);
                     if(coinFlip <= 25) {
                         gameProperties.cough(frontMostPed);
-                    } else if(coinFlip >= 80) {
+                    } else if(coinFlip >= 90) {
                         gameProperties.sneeze(frontMostPed);
                     }
                 } 
@@ -276,6 +283,15 @@ export class preloadScene extends Phaser.Scene {
                 if(gameProperties.score / 10 == gameProperties.level) {
                     gameProperties.level++;
                     gameProperties.pedSpeed -= (10 * userDevice.widthScale);
+
+                    let drone = gameProperties.gameObjects.drones.create(
+                        gameProperties.gameObjects.pedZone2.x, 
+                        gameProperties.gameObjects.pedZone2.y - 100, 
+                        'drone'
+                    ).setScale(userDevice.heightScale).setVelocityX(-900 * userDevice.widthScale);
+
+                    drone.body.setSize(150, 100, true).setAllowGravity(false);
+                    drone.anims.play('droneFly');
                 }
             },
             contact: () => {
@@ -287,7 +303,7 @@ export class preloadScene extends Phaser.Scene {
                 gameProperties.gameObjects.player.isInMotion = false;
     
                 if(!gameProperties.muted) {
-                    //gameOverSFX.play();
+                    gameProperties.sounds.gameOverSFX.play();
                 }
             },
             addOverlaps: () => {
@@ -336,6 +352,9 @@ export class preloadScene extends Phaser.Scene {
                 //populated below using methods in this object
             },
             animations: {
+
+            },
+            sounds: {
 
             },
             colliders: {
@@ -415,6 +434,9 @@ export class preloadScene extends Phaser.Scene {
         
         //sets up cloud group
         gameProperties.gameObjects.clouds = this.physics.add.group();
+        
+        //sets up drones group
+        gameProperties.gameObjects.drones = this.physics.add.group();
 
         //sprite "boxes" are larger than the sprite, so we resize them
         gameProperties.gameObjects.hitBoxHeight = gameProperties.gameObjects.player.body.height * 0.7;
@@ -459,6 +481,13 @@ export class preloadScene extends Phaser.Scene {
             key: 'cloudIdle',
             frames: this.anims.generateFrameNumbers('cloud', { start: 0, end: 2 }),
             frameRate: 3,
+            repeat: -1
+        });
+
+        gameProperties.animations.droneFly = this.anims.create({
+            key: 'droneFly',
+            frames: this.anims.generateFrameNumbers('drone', { start: 0, end: 2 }),
+            frameRate: 20,
             repeat: -1
         });
 
@@ -541,10 +570,10 @@ export class preloadScene extends Phaser.Scene {
         });
         
         //=== sounds ===
-        //jumpSFX = this.sound.add('jumpSound');
+        gameProperties.sounds.jumpSFX = this.sound.add('jumpSound');
         // sneezeSFX = this.sound.add('sneezeSound');
         // coughSFX = this.sound.add('coughSound');
-        //gameOverSFX = this.sound.add('gameOverSound');
+        gameProperties.sounds.gameOverSFX = this.sound.add('gameOverSound');
 
         //=== ui buttons ===
         //pause

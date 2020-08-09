@@ -70,7 +70,8 @@ export class gameOverScene extends Phaser.Scene {
             heightRatio: 0.85
         }).setInteractive();
         restartButton.on("pointerdown", () => {
-            //this.sound.add('startSound').play();
+            this.sound.add('startSound').play();
+            
             gameOverTitle.destroy();
             scoreBoard.destroy();
             gameScoreText.destroy();

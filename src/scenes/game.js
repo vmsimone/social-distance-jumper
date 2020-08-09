@@ -106,8 +106,8 @@ export class gameScene extends Phaser.Scene {
                 && 
                 gameProperties.gameObjects.player.body.touching.down
             ) {
-                if(!gameProperties.muted) {
-                    //jumpSFX.play();
+                if(!gameProperties.muted && gameProperties.gameObjects.player.isInMotion == true) {
+                    gameProperties.sounds.jumpSFX.play();
                 }
                 gameProperties.gameObjects.player.setVelocityY(gameProperties.jumpVelocity);
             }

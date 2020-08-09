@@ -16,7 +16,7 @@ export class startMenuScene extends Phaser.Scene {
     create() {
         //click to start
         gameProperties.buttons.playButton.on("pointerdown", () => {
-            //this.sound.add('startSound').play();
+            this.sound.add('startSound').play();
             
             //get rid of start menu w/out losing other preloaded assets
             gameProperties.background.screenDarken.setVisible(false);
@@ -30,6 +30,6 @@ export class startMenuScene extends Phaser.Scene {
             this.scene.launch(SCENES.GETREADY, gameProperties);
         });
 
-        //this.sound.add('music', {loop: true}).play();
+        this.sound.add('music', {loop: true}).play();
     }
 };
