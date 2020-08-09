@@ -2,9 +2,7 @@ import { SCENES } from "../sceneHandler.js";
 
 let gameProperties;
 
-let highScore;
 let level;
-let pedSpeed; //peds move right to left
 
 let clouds;
 let cloud;
@@ -19,17 +17,6 @@ export class gameScene extends Phaser.Scene {
 
     init(sceneData) {
         gameProperties = sceneData;
-
-        //get rid of this later
-        let gameData = {}
-        if(gameData.highScore) {
-            highScore = gameData.highScore;
-        } else {
-            highScore = 0;
-        }
-        level = 1;
-
-        pedSpeed = gameProperties.width * -0.6;
     }
 
     preload() {
@@ -87,12 +74,7 @@ export class gameScene extends Phaser.Scene {
         }
         
         gameProperties.gameObjects.player.setVisible(true);
-        //gameProperties.score.setDepth(2);
-
-        console.log(gameProperties.colliders);
-        this.physics.world.addCollider(gameProperties.colliders.pedCollider);
-        this.physics.world.addCollider(gameProperties.colliders.cloudCollider);
-        this.physics.world.addCollider(gameProperties.colliders.scoreCollider);
+        gameProperties.addOverlaps();
     }
 
     create() {
@@ -112,15 +94,6 @@ export class gameScene extends Phaser.Scene {
         
         //add first pedestrian to the scene and puts them in the active peds array
         gameProperties.activatePed();
-
-        //overlaps that affect the game; callback functions listed after update()
-        // gameProperties.colliders.scoreCollider = this.physics.add.overlap(
-        //     gameProperties.gameObjects.scoreZone, 
-        //     gameProperties.gameObjects.peds, 
-        //     addScore,
-        //     null, 
-        //     this
-        // );
     }
 
     update() {
@@ -204,52 +177,4 @@ function pedCough(ped) {
         cloud.setVelocityX(thisPedSpeed);
         cloud.anims.play('cloudIdle');
     }
-}
-
-function addScore() {
-    console.log('scored');
-    if (ped.scored == undefined) {
-        gameProperties.score += 1;
-        gameProperties.scoreText.setText(gameProperties.score);
-  
-        gameProperties.addRandomPed();
-  
-        gameProperties.gameObjects.ped.scored = true;
-      
-        if(gameProperties.score / 10 == level) {
-            gameProperties.level++;
-            gameProperties.pedSpeed -= (100 * gameProperties.widthScale)
-        }
-    }
-}
-
-function createNewPed() {
-    const newpedNum = randomPedNumber();
-        const pedZoneNum = 1; //Phaser.Math.Between(1, 3);
-
-        gameProperties.gameObjects.newped = gameProperties.gameObjects.peds.create(
-            gameProperties.gameObjects[`pedZone${pedZoneNum}`].x, 
-            gameProperties.gameObjects[`pedZone${pedZoneNum}`].y, 
-            `ped${newpedNum}`
-        ).setScale(gameProperties.heightScale)
-        gameProperties.gameObjects.newped.body.setSize(
-            gameProperties.gameObjects.hitBoxWidth, 
-            gameProperties.gameObjects.hitBoxHeight,
-            true
-        );
-        gameProperties.gameObjects.newped.setVelocityX(
-            Phaser.Math.Between(
-                (gameProperties.pedSpeed - 10), 
-                (gameProperties.pedSpeed + 10)
-            )
-        );
-        if(newpedNum <= 12) {
-            gameProperties.gameObjects.newped.masked = true;
-        }
-        gameProperties.gameObjects.newped.anims.play(`walking${newpedNum}`);
-}
-
-function randomPedNumber() {
-    let num = Phaser.Math.Between(1, 25);
-    return num;
 }

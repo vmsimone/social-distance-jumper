@@ -197,6 +197,29 @@ export class preloadScene extends Phaser.Scene {
                     //gameOverSFX.play();
                 }
             },
+            addOverlaps: () => {
+                gameProperties.colliders.scoreCollider = this.physics.add.overlap(
+                    gameProperties.gameObjects.scoreZone, 
+                    gameProperties.gameObjects.peds, 
+                    gameProperties.increaseScore,
+                    null,
+                    this
+                );
+                gameProperties.colliders.pedCollider = this.physics.add.overlap(
+                    gameProperties.gameObjects.player, 
+                    gameProperties.gameObjects.peds, 
+                    gameProperties.contact, 
+                    null, 
+                    this
+                );
+                gameProperties.colliders.cloudCollider = this.physics.add.overlap(
+                    gameProperties.gameObjects.player, 
+                    gameProperties.gameObjects.clouds, 
+                    gameProperties.contact, 
+                    null, 
+                    this
+                );
+            },
             //game props
             spriteScale: userDevice.heightScale,
             muted: false,
@@ -248,7 +271,7 @@ export class preloadScene extends Phaser.Scene {
 
         //invisible to the player, but adds points when touched by ped
         gameProperties.gameObjects.scoreZone = this.physics.add.sprite(
-            (userDevice.width * 0.1), 
+            (userDevice.width * 0.05), 
             (userDevice.height * 0.7), 
             'scoreZone'
         ).setScale(userDevice.heightScale);
@@ -274,7 +297,7 @@ export class preloadScene extends Phaser.Scene {
 
         //player, peds, and obstacles
         gameProperties.gameObjects.player = this.physics.add.sprite(
-            gameProperties.gameObjects.scoreZone.x + 5, 
+            (userDevice.width * 0.1), 
             gameProperties.gameObjects.scoreZone.y,
             'player'
         ).setCollideWorldBounds(true)
@@ -340,6 +363,7 @@ export class preloadScene extends Phaser.Scene {
         });
 
         //=== colliders ===
+        
         gameProperties.colliders.scoreZoneGround = this.physics.add.collider(
             gameProperties.gameObjects.scoreZone, 
             gameProperties.gameObjects.ground
@@ -365,27 +389,28 @@ export class preloadScene extends Phaser.Scene {
             gameProperties.gameObjects.ground
         );
         //overlaps for scoring and gameover
-        gameProperties.colliders.scoreCollider = this.physics.add.overlap(
-            gameProperties.gameObjects.scoreZone, 
-            gameProperties.gameObjects.peds, 
-            gameProperties.increaseScore,
-            null,
-            this
-        );
-        gameProperties.colliders.pedCollider = this.physics.add.overlap(
-            gameProperties.gameObjects.player, 
-            gameProperties.gameObjects.peds, 
-            gameProperties.contact, 
-            null, 
-            this
-        );
-        gameProperties.colliders.cloudCollider = this.physics.add.overlap(
-            gameProperties.gameObjects.player, 
-            gameProperties.gameObjects.clouds, 
-            gameProperties.contact, 
-            null, 
-            this
-        );
+
+        // gameProperties.colliders.scoreCollider = this.physics.add.overlap(
+        //     gameProperties.gameObjects.scoreZone, 
+        //     gameProperties.gameObjects.peds, 
+        //     gameProperties.increaseScore,
+        //     null,
+        //     this
+        // );
+        // gameProperties.colliders.pedCollider = this.physics.add.overlap(
+        //     gameProperties.gameObjects.player, 
+        //     gameProperties.gameObjects.peds, 
+        //     gameProperties.contact, 
+        //     null, 
+        //     this
+        // );
+        // gameProperties.colliders.cloudCollider = this.physics.add.overlap(
+        //     gameProperties.gameObjects.player, 
+        //     gameProperties.gameObjects.clouds, 
+        //     gameProperties.contact, 
+        //     null, 
+        //     this
+        // );
 
         //=== start menu section ===
         //"Social Distance Jumper"

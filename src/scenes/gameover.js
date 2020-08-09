@@ -17,7 +17,7 @@ export class gameOverScene extends Phaser.Scene {
     preload() {
         updateHighscore();
         gameProperties.gameObjects.player.setVisible(false);
-        //gameProperties.score.setDepth(-1);
+        gameProperties.scoreText.destroy();
 
         gameProperties.gameObjects.player.isDown = false;
     }
@@ -39,26 +39,22 @@ export class gameOverScene extends Phaser.Scene {
             widthRatio: 0.5,
             heightRatio: 0.4
         });
-        scoreBoard.setVisible(false);
 
         //fontSize: '64px'
         const gameScoreText = gameProperties.addText(this, {
             content: gameProperties.score,
-            widthRatio: (scoreBoard.x * 0.8),
-            heightRatio: scoreBoard.y,
+            widthRatio: 0.4,
+            heightRatio: 0.4,
             fill: '#FFFF00'
         });
 
         //fontSize: '64px'
         const highScoreText = gameProperties.addText(this, {
             content: gameProperties.highScore,
-            widthRatio: (scoreBoard.x * 1.12),
-            heightRatio: scoreBoard.y,
+            widthRatio: 0.55,
+            heightRatio: 0.4,
             fill: '#FFFF00'
         });
-        console.log(gameProperties.score);
-        console.log(gameScoreText);
-        console.log(highScoreText);
 
         //credits
        const credits = gameProperties.addImage(this, {
