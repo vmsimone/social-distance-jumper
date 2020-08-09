@@ -165,58 +165,64 @@ export class preloadScene extends Phaser.Scene {
                 }
             },
             cough: (ped) => {
-                const thisPedSpeed = ped.body.velocity.x || 0;
-                const pedPositionX = ped.x + (ped.displayOriginX / 2) - 10;
-                if(!gameProperties.muted) {
-                    //coughSFX.play();
-                }
-            
-                if (ped.masked == null) {
-                    let cloud = gameProperties.gameObjects.clouds.create(
-                        pedPositionX, 
-                        ped.y + 75, 
-                        'cloud'
-                    ).setScale(userDevice.heightScale).setVelocityX(thisPedSpeed - 75);
+                //secondary check
+                if(ped.coughed != true) {
+                    const thisPedSpeed = ped.body.velocity.x || 0;
+                    const pedPositionX = ped.x + (ped.displayOriginX / 2) - 10;
+                    if(!gameProperties.muted) {
+                        //coughSFX.play();
+                    }
+                
+                    if (ped.masked == null) {
+                        let cloud = gameProperties.gameObjects.clouds.create(
+                            pedPositionX, 
+                            ped.y + 75, 
+                            'cloud'
+                        ).setScale(userDevice.heightScale).setVelocityX(thisPedSpeed - 75);
 
-                    cloud.body.setSize(150, 100, true);
-                    cloud.anims.play('cloudIdle');
-                } else {
-                    let cloud = gameProperties.gameObjects.clouds.create(
-                        pedPositionX, 
-                        ped.y + 75, 
-                        'cloud'
-                    ).setScale(userDevice.heightScale).setVelocityX(thisPedSpeed);
-            
-                    cloud.body.setSize(150, 100, true).setAllowGravity(false);
-                    cloud.anims.play('cloudIdle');
+                        cloud.body.setSize(150, 100, true);
+                        cloud.anims.play('cloudIdle');
+                    } else {
+                        let cloud = gameProperties.gameObjects.clouds.create(
+                            pedPositionX, 
+                            ped.y + 75, 
+                            'cloud'
+                        ).setScale(userDevice.heightScale).setVelocityX(thisPedSpeed);
+                
+                        cloud.body.setSize(150, 100, true).setAllowGravity(false);
+                        cloud.anims.play('cloudIdle');
+                    }
                 }
                 ped.coughed = true;
             },
             sneeze: (ped) => {
-                const thisPedSpeed = ped.body.velocity.x || 0;
-                const pedPositionX = ped.x + (ped.displayOriginX / 2) - 10;
-                if(!gameProperties.muted) {
-                    //sneezeSFX.play();
-                }
-                
-                if (ped.masked == null) {
-                    let cloud = gameProperties.gameObjects.clouds.create(
-                        pedPositionX, 
-                        ped.y + 75, 
-                        'cloud'
-                    ).setScale(userDevice.heightScale).setVelocityX(thisPedSpeed * 3);
-
-                    cloud.body.setSize(150, 100, true);
-                    cloud.anims.play('cloudIdle');
-                } else {
-                    let cloud = gameProperties.gameObjects.clouds.create(
-                        pedPositionX, 
-                        ped.y + 75, 
-                        'cloud'
-                    ).setScale(userDevice.heightScale).setVelocityX(thisPedSpeed);
-
-                    cloud.body.setSize(150, 100, true).setAllowGravity(false);
-                    cloud.anims.play('cloudIdle');
+                //secondary check
+                if(ped.sneezed != true) {
+                    const thisPedSpeed = ped.body.velocity.x || 0;
+                    const pedPositionX = ped.x + (ped.displayOriginX / 2) - 10;
+                    if(!gameProperties.muted) {
+                        //sneezeSFX.play();
+                    }
+                    
+                    if (ped.masked == null) {
+                        let cloud = gameProperties.gameObjects.clouds.create(
+                            pedPositionX, 
+                            ped.y + 75, 
+                            'cloud'
+                        ).setScale(userDevice.heightScale).setVelocityX(thisPedSpeed * 3);
+    
+                        cloud.body.setSize(150, 100, true);
+                        cloud.anims.play('cloudIdle');
+                    } else {
+                        let cloud = gameProperties.gameObjects.clouds.create(
+                            pedPositionX, 
+                            ped.y + 75, 
+                            'cloud'
+                        ).setScale(userDevice.heightScale).setVelocityX(thisPedSpeed);
+    
+                        cloud.body.setSize(150, 100, true).setAllowGravity(false);
+                        cloud.anims.play('cloudIdle');
+                    }
                 }
                 ped.sneezed = true;
             },
@@ -236,10 +242,7 @@ export class preloadScene extends Phaser.Scene {
             coughOrSneeze2: () => {
                 const frontMostPed = gameProperties.activePeds[gameProperties.activePeds.length - 1];
 
-                if(frontMostPed.sneezed != true
-                    && frontMostPed.coughed != true
-                    && frontMostPed.zone2Touched == undefined
-                ) {
+                if(frontMostPed.zone2Touched == undefined) {
                     const coinFlip = Phaser.Math.Between(1, 100);
                     if(coinFlip <= 25) {
                         gameProperties.cough(frontMostPed);
