@@ -19,7 +19,8 @@ export class startMenuScene extends Phaser.Scene {
             //this.sound.add('startSound').play();
             
             //get rid of start menu w/out losing other preloaded assets
-            gameProperties.background.screenDarken.destroy();
+            gameProperties.background.screenDarken.setVisible(false);
+            
             gameProperties.background.title.destroy();
             gameProperties.background.copyright.destroy();
 

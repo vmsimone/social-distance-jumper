@@ -153,8 +153,8 @@ export class preloadScene extends Phaser.Scene {
                     userDevice.width * text.widthRatio, 
                     userDevice.height * text.heightRatio,
                     text.content,
-                    { fontFamily: "dogicapixel", fontSize: '64px', fill: '#FFF' }
-                ).setScale(userDevice.heightScale);
+                    { fontFamily: "dogicapixel", fontSize: '64px', fill: text.fill }
+                ).setScale(userDevice.heightScale).setDepth(2);
             },
             createWalkingAnim: (pedId, anims) => {
                 return {
@@ -195,12 +195,6 @@ export class preloadScene extends Phaser.Scene {
     
                 if(!gameProperties.muted) {
                     //gameOverSFX.play();
-                }
-    
-                gameProperties.gameObjects.player.anims.play('gg', true);
-                let animOver = gameProperties.gameObjects.player.anims.getProgress();
-                if(animOver == 1) {
-                    scene.launch(SCENES.GAMEOVER, { "gameScore": gameProperties.score, "highScore": highScore });
                 }
             },
             //game props

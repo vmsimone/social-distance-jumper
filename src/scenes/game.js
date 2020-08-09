@@ -85,40 +85,14 @@ export class gameScene extends Phaser.Scene {
                 gameProperties.addRandomPed()
             );
         }
+        
+        gameProperties.gameObjects.player.setVisible(true);
+        //gameProperties.score.setDepth(2);
 
-        // function increaseScore() {
-        //     console.log('increase score called');
-        //     if(gameProperties.gameObjects.ped) {
-        //         if(gameProperties.gameObjects.ped.scored == undefined) {
-        //             gameProperties.score += 1;
-        //             gameProperties.scoreText.setText(gameProperties.score);
-        //             gameProperties.gameObjects.ped.scored = true;
-              
-        //             gameProperties.gameObjects.ped = gameProperties.addRandomPed();
-        //             gameProperties.gameObjects.ped.body.setSize(
-        //                 gameProperties.gameObjects.hitBoxWidth, 
-        //                 gameProperties.gameObjects.hitBoxHeight, 
-        //                 true
-        //             ).setVelocityX(
-        //                 Phaser.Math.Between(
-        //                     (gameProperties.pedSpeed - 10), 
-        //                     (gameProperties.pedSpeed + 10)
-        //                 )
-        //             );
-        //             if(gameProperties.activePed <= 12) {
-        //                 gameProperties.gameObjects.newPed.masked = true;
-        //             }
-        //             gameProperties.gameObjects.newPed.anims.play(`walking${gameProperties.activePed}`);
-    
-        //             console.log(gameProperties.gameObjects.newPed);
-        //         }
-        //     }
-            
-        //     if(gameProperties.score / 10 == gameProperties.level) {
-        //         gameProperties.level++;
-        //         gameProperties.pedSpeed -= (100 * gameProperties.widthScale)
-        //     }
-        // }
+        console.log(gameProperties.colliders);
+        this.physics.world.addCollider(gameProperties.colliders.pedCollider);
+        this.physics.world.addCollider(gameProperties.colliders.cloudCollider);
+        this.physics.world.addCollider(gameProperties.colliders.scoreCollider);
     }
 
     create() {
@@ -132,7 +106,8 @@ export class gameScene extends Phaser.Scene {
         gameProperties.scoreText = gameProperties.addText(this, {
             content: gameProperties.score,
             widthRatio: 0.05,
-            heightRatio: 0.05
+            heightRatio: 0.05,
+            fill: '#FFFFFF'
         });
         
         //add first pedestrian to the scene and puts them in the active peds array
@@ -170,6 +145,12 @@ export class gameScene extends Phaser.Scene {
                     //jumpSFX.play();
                 }
                 gameProperties.gameObjects.player.setVelocityY(gameProperties.jumpVelocity);
+            }
+        } else {
+            gameProperties.gameObjects.player.anims.play('gg', true);
+            let animOver = gameProperties.gameObjects.player.anims.getProgress();
+            if(animOver == 1) {
+                this.scene.launch(SCENES.GAMEOVER, gameProperties);
             }
         }
     }

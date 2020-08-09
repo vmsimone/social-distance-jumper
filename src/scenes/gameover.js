@@ -1,13 +1,6 @@
 import { SCENES } from "../sceneHandler.js";
 
-let gameWidth;
-let gameHeight;
-let gameHeightScale;
-
-let gameScore;
-let gameScoreText;
-let highScore;
-let highScoreText;
+let gameProperties;
 
 export class gameOverScene extends Phaser.Scene {
     constructor() {
@@ -16,82 +9,88 @@ export class gameOverScene extends Phaser.Scene {
         });
     }
 
-    init(gameData) {
-        gameScore = gameData.gameScore;
-        highScore = gameData.highScore;
+    init(sceneData) {
+        console.log('GG');
+        gameProperties = sceneData;
+    }
+
+    preload() {
+        updateHighscore();
+        gameProperties.gameObjects.player.setVisible(false);
+        //gameProperties.score.setDepth(-1);
+
+        gameProperties.gameObjects.player.isDown = false;
     }
 
     create() {
-        //this will help us organize better
-        gameWidth = this.game.renderer.width;
-        gameHeight = this.game.renderer.height;
+        //filter to darken background for start menu
+        gameProperties.background.screenDarken.setVisible(true);
 
-        //bg scaled to fit 727 x 1293
-        const bgHeightScale = gameHeight / 1293;
+        //"Game Over"
+        const gameOverTitle = gameProperties.addImage(this, {
+            name: "gameOverTitle",
+            widthRatio: 0.5,
+            heightRatio: 0.2
+        });
 
-        //images all scaled to fit 1080 x 1920
-        gameHeightScale = gameHeight / 1920;
+        //scoreboard displaying score and best
+        const scoreBoard = gameProperties.addImage(this, {
+            name: "scoreBoard",
+            widthRatio: 0.5,
+            heightRatio: 0.4
+        });
+        scoreBoard.setVisible(false);
 
-        //create the background
-        const bg = this.add.tileSprite(0, 0, 4096, 1293, 'background').setDepth(0);
-        const mg = this.add.tileSprite(0, 0, 4096, 1293, 'midground').setDepth(0);
-        const fg = this.add.tileSprite(0, 0, 4096, 1293, 'foreground').setDepth(0);
+        //fontSize: '64px'
+        const gameScoreText = gameProperties.addText(this, {
+            content: gameProperties.score,
+            widthRatio: (scoreBoard.x * 0.8),
+            heightRatio: scoreBoard.y,
+            fill: '#FFFF00'
+        });
 
-        bg.setOrigin(0).setScale(bgHeightScale);
-        mg.setOrigin(0).setScale(bgHeightScale);
-        fg.setOrigin(0).setScale(bgHeightScale);
-        
-        this.add.image(0, 0, "screenDarken").setDepth(1).setOrigin(0).setScale(gameHeightScale);
+        //fontSize: '64px'
+        const highScoreText = gameProperties.addText(this, {
+            content: gameProperties.highScore,
+            widthRatio: (scoreBoard.x * 1.12),
+            heightRatio: scoreBoard.y,
+            fill: '#FFFF00'
+        });
+        console.log(gameProperties.score);
+        console.log(gameScoreText);
+        console.log(highScoreText);
 
-        let scoreBoard = this.add.image(
-            gameWidth * 0.5, 
-            gameHeight * 0.4, 
-            "scoreBoard"
-        ).setDepth(1).setScale(gameHeightScale);
-        
-        gameScoreText = this.add.text(
-            scoreBoard.x * 0.8, 
-            scoreBoard.y,
-            `${gameScore}`, 
-            { fontFamily: "dogicapixel", fontSize: '64px', fill: '#FFFF00' }
-        ).setDepth(1).setScale(gameHeightScale);
+        //credits
+       const credits = gameProperties.addImage(this, {
+            name: "credits",
+            widthRatio: 0.5,
+            heightRatio: 0.6
+        });
 
-        highScoreText = this.add.text(
-            scoreBoard.x * 1.12, 
-            scoreBoard.y,
-            `${updateHighscore()}`, 
-            { fontFamily: "dogicapixel", fontSize: '64px', fill: '#FFFF00' }
-        ).setDepth(1).setScale(gameHeightScale);
-
-        this.add.image(
-            gameWidth * 0.5, 
-            gameHeight * 0.2, 
-            "gameOverTitle"
-        ).setDepth(1).setScale(gameHeightScale);
-        
-        this.add.image(
-            gameWidth * 0.5, 
-            gameHeight * 0.6, 
-            "credits"
-        ).setDepth(1).setScale(gameHeightScale);
-
-        const restartButton = this.add.image(
-            gameWidth * 0.5, 
-            gameHeight * 0.85,
-            "restartButton"
-        ).setDepth(1).setScale(gameHeightScale);
-
-        restartButton.setInteractive();
+        //restart button
+        const restartButton = gameProperties.addButton(this, {
+            name: "restartButton",
+            widthRatio: 0.5,
+            heightRatio: 0.85
+        }).setInteractive();
         restartButton.on("pointerdown", () => {
-            this.sound.add('startSound').play();
-            this.scene.start(SCENES.GAME, {"highScore": highScore});
+            //this.sound.add('startSound').play();
+            gameOverTitle.destroy();
+            scoreBoard.destroy();
+            gameScoreText.destroy();
+            highScoreText.destroy();
+            credits.destroy();
+            restartButton.destroy();
+            
+            gameProperties.background.screenDarken.setVisible(false);
+            gameProperties.score = 0;
+            this.scene.launch(SCENES.GAME, gameProperties);
         });
     }
 };
 
 function updateHighscore() {
-    if(gameScore >= highScore) {
-        highScore = gameScore;
+    if(gameProperties.score > gameProperties.highScore) {
+        gameProperties.highScore = gameProperties.score;
     }
-    return highScore;
 }
