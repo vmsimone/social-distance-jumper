@@ -54,8 +54,8 @@ export class gameScene extends Phaser.Scene {
             newped.anims.play(`walking${randomPedNum}`);
             newped.setVelocityX(
                 Phaser.Math.Between(
-                    (gameProperties.pedSpeed - 25), 
-                    (gameProperties.pedSpeed + 50)
+                    (gameProperties.pedSpeed - 20), 
+                    (gameProperties.pedSpeed + 20)
                 )
             );
 

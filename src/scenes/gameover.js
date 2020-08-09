@@ -81,6 +81,7 @@ export class gameOverScene extends Phaser.Scene {
             
             gameProperties.background.screenDarken.setVisible(false);
             gameProperties.score = 0;
+            gameProperties.level = 1;
             this.scene.launch(SCENES.GAME, gameProperties);
         });
     }
