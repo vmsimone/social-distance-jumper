@@ -77,6 +77,8 @@ export class gameScene extends Phaser.Scene {
 
     create() {
         //add first pedestrian to the scene and puts them in the active peds array
+        gameProperties.pointer = this.input.activePointer;
+        
         gameProperties.activePeds.unshift(
             gameProperties.addRandomPed()
         );
@@ -120,55 +122,3 @@ export class gameScene extends Phaser.Scene {
         }
     }
 };
-
-function pedSneeze(ped) {
-    const thisPedSpeed = ped.body.velocity.x || 0;
-    const pedPositionX = ped.x + (ped.displayOriginX / 2);
-    if(!gameProperties.muted) {
-        //sneezeSFX.play();
-    }
-    
-    if (ped.masked == null) {
-        cloud = clouds.create(pedPositionX, ped.y + 75, 'cloud');
-        cloud.setScale(gameProperties.heightScale);
-
-        cloud.body.setSize(150, 100, true);
-        cloud.setVelocityX(thisPedSpeed - 200);
-        cloud.anims.play('cloudIdle');
-    } else {
-        cloud = clouds.create(pedPositionX, ped.y + 75, 'cloud');
-        cloud.setScale(gameProperties.heightScale);
-
-        cloud.body.setSize(150, 100, true);
-        cloud.body.setAllowGravity(false);
-        cloud.setVelocityX(thisPedSpeed);
-        cloud.anims.play('cloudIdle');
-    }
-    ped.sneezed = true;
-}
-
-function pedCough(ped) {
-    const thisPedSpeed = ped.body.velocity.x || 0;
-    const pedPositionX = ped.x + (ped.displayOriginX / 2);
-    // if(!gameProperties.muted) {
-    //     coughSFX.play();
-    // }
-
-    if (ped.masked == null) {
-        cloud = clouds.create(pedPositionX, ped.y + 75, 'cloud');
-        cloud.setScale(gameProperties.heightScale);
-
-        cloud.body.setSize(150, 100, true);
-        cloud.setVelocityX(thisPedSpeed - 75);
-        cloud.anims.play('cloudIdle');
-    } else {
-        cloud = clouds.create(pedPositionX, ped.y + 75, 'cloud');
-        cloud.setScale(gameProperties.heightScale);
-
-        cloud.body.setSize(150, 100, true);
-        cloud.body.setAllowGravity(false);
-        cloud.setVelocityX(thisPedSpeed);
-        cloud.anims.play('cloudIdle');
-    }
-    ped.coughed = true;
-}
