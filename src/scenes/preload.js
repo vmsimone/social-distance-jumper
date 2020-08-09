@@ -164,9 +164,90 @@ export class preloadScene extends Phaser.Scene {
                     repeat: -1
                 }
             },
+            cough: (ped) => {
+                const thisPedSpeed = ped.body.velocity.x || 0;
+                const pedPositionX = ped.x + (ped.displayOriginX / 2) - 10;
+                if(!gameProperties.muted) {
+                    //coughSFX.play();
+                }
+            
+                if (ped.masked == null) {
+                    let cloud = gameProperties.gameObjects.clouds.create(
+                        pedPositionX, 
+                        ped.y + 75, 
+                        'cloud'
+                    ).setScale(userDevice.heightScale).setVelocityX(thisPedSpeed - 75);
+
+                    cloud.body.setSize(150, 100, true);
+                    cloud.anims.play('cloudIdle');
+                } else {
+                    let cloud = gameProperties.gameObjects.clouds.create(
+                        pedPositionX, 
+                        ped.y + 75, 
+                        'cloud'
+                    ).setScale(userDevice.heightScale).setVelocityX(thisPedSpeed);
+            
+                    cloud.body.setSize(150, 100, true).setAllowGravity(false);
+                    cloud.anims.play('cloudIdle');
+                }
+                ped.coughed = true;
+            },
+            sneeze: (ped) => {
+                const thisPedSpeed = ped.body.velocity.x || 0;
+                const pedPositionX = ped.x + (ped.displayOriginX / 2) - 10;
+                if(!gameProperties.muted) {
+                    //sneezeSFX.play();
+                }
+                
+                if (ped.masked == null) {
+                    let cloud = gameProperties.gameObjects.clouds.create(
+                        pedPositionX, 
+                        ped.y + 75, 
+                        'cloud'
+                    ).setScale(userDevice.heightScale).setVelocityX(thisPedSpeed * 3);
+
+                    cloud.body.setSize(150, 100, true);
+                    cloud.anims.play('cloudIdle');
+                } else {
+                    let cloud = gameProperties.gameObjects.clouds.create(
+                        pedPositionX, 
+                        ped.y + 75, 
+                        'cloud'
+                    ).setScale(userDevice.heightScale).setVelocityX(thisPedSpeed);
+
+                    cloud.body.setSize(150, 100, true).setAllowGravity(false);
+                    cloud.anims.play('cloudIdle');
+                }
+                ped.sneezed = true;
+            },
+            coughOrSneeze1: () => {
+                const frontMostPed = gameProperties.activePeds[gameProperties.activePeds.length - 1];
+
+                if(frontMostPed.zone1Touched == undefined) {
+                    const coinFlip = Phaser.Math.Between(1, 100);
+                    if(coinFlip <= 25) {
+                        gameProperties.cough(frontMostPed);
+                    } else if(coinFlip >= 80) {
+                        gameProperties.sneeze(frontMostPed);
+                    }
+                } 
+                frontMostPed.zone1Touched = true;
+            },
+            coughOrSneeze2: () => {
+                const frontMostPed = gameProperties.activePeds[gameProperties.activePeds.length - 1];
+
+                if(frontMostPed.zone1Touched == undefined && frontMostPed.zone2Touched == undefined) {
+                    const coinFlip = Phaser.Math.Between(1, 100);
+                    if(coinFlip <= 25) {
+                        gameProperties.cough(frontMostPed);
+                    } else if(coinFlip >= 80) {
+                        gameProperties.sneeze(frontMostPed);
+                    }
+                } 
+                frontMostPed.zone2Touched = true;
+            },
             increaseScore: () => {
                 const frontmostPed = gameProperties.activePeds[gameProperties.activePeds.length - 1];
-                console.log('score increased');
                 gameProperties.score += 1;
                 gameProperties.scoreText.setText(gameProperties.score);
 
@@ -176,8 +257,14 @@ export class preloadScene extends Phaser.Scene {
                 gameProperties.gameObjects.peds.remove(frontmostPed);
                 gameProperties.activePeds.pop();
 
-                //add new ped to the array
-                gameProperties.activatePed();
+                //add new ped to the array, more per level
+                for(let i = 1; i <= gameProperties.level; i+=2) {
+                    if(gameProperties.activePeds.length < gameProperties.level) {
+                        gameProperties.activePeds.unshift(
+                            gameProperties.addRandomPed()
+                        );
+                    }
+                }
                 
                 //level up
                 if(gameProperties.score / 10 == gameProperties.level) {
@@ -186,12 +273,12 @@ export class preloadScene extends Phaser.Scene {
                 }
             },
             contact: () => {
-                console.log('CONTACT')
                 this.physics.world.removeCollider(gameProperties.colliders.pedCollider);
                 this.physics.world.removeCollider(gameProperties.colliders.cloudCollider);
                 this.physics.world.removeCollider(gameProperties.colliders.scoreCollider);
     
                 gameProperties.gameObjects.player.isDown = true;
+                gameProperties.gameObjects.player.isInMotion = false;
     
                 if(!gameProperties.muted) {
                     //gameOverSFX.play();
@@ -226,9 +313,9 @@ export class preloadScene extends Phaser.Scene {
             score: 0,
             highScore: 0,
             level: 1,
-            jumpVelocity: -1 * userDevice.height,
+            jumpVelocity: -1.1 * userDevice.height,
             activePeds: [],
-            pedSpeed: -300 * userDevice.widthScale,
+            pedSpeed: -350 * userDevice.widthScale,
             maxPedSpeed: -500 * userDevice.widthScale, //more like minimum, but right-to-left
             background: {
                 //populated below using methods in this object
@@ -278,7 +365,7 @@ export class preloadScene extends Phaser.Scene {
 
         //invisible to the player; peds will spawn at these locations
         gameProperties.gameObjects.pedZone1 = this.physics.add.sprite(
-            (userDevice.width * 0.9), 
+            (userDevice.width * 1.1), 
             (userDevice.height * 0.7), 
             'pedZone'
         ).setScale(userDevice.heightScale);
@@ -293,6 +380,19 @@ export class preloadScene extends Phaser.Scene {
             (userDevice.width * 1.3), 
             (userDevice.height * 0.7), 
             'pedZone'
+        ).setScale(userDevice.heightScale);
+
+        //invisible to the player; peds may cough/sneeze at these locations
+        gameProperties.gameObjects.coughZone1 = this.physics.add.sprite(
+            (userDevice.width * 0.4), 
+            (userDevice.height * 0.7), 
+            'coughZone'
+        ).setScale(userDevice.heightScale);
+
+        gameProperties.gameObjects.coughZone2 = this.physics.add.sprite(
+            (userDevice.width * 0.6), 
+            (userDevice.height * 0.7), 
+            'coughZone'
         ).setScale(userDevice.heightScale);
 
         //player, peds, and obstacles
@@ -363,7 +463,6 @@ export class preloadScene extends Phaser.Scene {
         });
 
         //=== colliders ===
-        
         gameProperties.colliders.scoreZoneGround = this.physics.add.collider(
             gameProperties.gameObjects.scoreZone, 
             gameProperties.gameObjects.ground
@@ -374,6 +473,14 @@ export class preloadScene extends Phaser.Scene {
         );
         gameProperties.colliders.pedZone2Ground = this.physics.add.collider(
             gameProperties.gameObjects.pedZone2, 
+            gameProperties.gameObjects.ground
+        );
+        gameProperties.colliders.coughZone1Ground = this.physics.add.collider(
+            gameProperties.gameObjects.coughZone1, 
+            gameProperties.gameObjects.ground
+        );
+        gameProperties.colliders.coughZone2Ground = this.physics.add.collider(
+            gameProperties.gameObjects.coughZone2, 
             gameProperties.gameObjects.ground
         );
         gameProperties.colliders.pedZone3Ground = this.physics.add.collider(
@@ -388,29 +495,22 @@ export class preloadScene extends Phaser.Scene {
             gameProperties.gameObjects.peds, 
             gameProperties.gameObjects.ground
         );
-        //overlaps for scoring and gameover
+        //permanent overlaps
+        gameProperties.colliders.coughCollider1 = this.physics.add.overlap(
+            gameProperties.gameObjects.coughZone1, 
+            gameProperties.gameObjects.peds, 
+            gameProperties.coughOrSneeze1,
+            null,
+            this
+        );
+        gameProperties.colliders.coughCollider2 = this.physics.add.overlap(
+            gameProperties.gameObjects.coughZone2, 
+            gameProperties.gameObjects.peds, 
+            gameProperties.coughOrSneeze2,
+            null,
+            this
+        );
 
-        // gameProperties.colliders.scoreCollider = this.physics.add.overlap(
-        //     gameProperties.gameObjects.scoreZone, 
-        //     gameProperties.gameObjects.peds, 
-        //     gameProperties.increaseScore,
-        //     null,
-        //     this
-        // );
-        // gameProperties.colliders.pedCollider = this.physics.add.overlap(
-        //     gameProperties.gameObjects.player, 
-        //     gameProperties.gameObjects.peds, 
-        //     gameProperties.contact, 
-        //     null, 
-        //     this
-        // );
-        // gameProperties.colliders.cloudCollider = this.physics.add.overlap(
-        //     gameProperties.gameObjects.player, 
-        //     gameProperties.gameObjects.clouds, 
-        //     gameProperties.contact, 
-        //     null, 
-        //     this
-        // );
 
         //=== start menu section ===
         //"Social Distance Jumper"
@@ -465,15 +565,14 @@ export class preloadScene extends Phaser.Scene {
         
         //lets player mute and unmute
         gameProperties.buttons.muteButton.on("pointerdown", () => {
-            if(gameProperties.muted) {
-                gameProperties.muted = false;
-                this.sound.mute = false;
-                gameProperties.buttons.unMuteButton.setDepth(0);
-            } else {
-                gameProperties.muted = true;
-                this.sound.mute = true;
-                gameProperties.buttons.unMuteButton.setDepth(2);
-            }
+            gameProperties.muted = true;
+            this.sound.mute = true;
+            gameProperties.buttons.unMuteButton.setDepth(2);
+        });
+        gameProperties.buttons.unMuteButton.on("pointerdown", () => {
+            gameProperties.muted = false;
+            this.sound.mute = false;
+            gameProperties.buttons.unMuteButton.setDepth(0);
         });
 
         //player controls        
@@ -484,21 +583,3 @@ export class preloadScene extends Phaser.Scene {
         this.scene.launch(SCENES.STARTMENU, gameProperties);
     }
 }
-
-// function addScore() {
-//     console.log('scored');
-//     console.log(gameProperties.gameObjects.ped);
-//     if (ped.scored == undefined) {
-//         gameProperties.score += 1;
-//         gameProperties.scoreText.setText(gameProperties.score);
-  
-//         gameProperties.addRandomPed();
-  
-//         gameProperties.gameObjects.ped.scored = true;
-      
-//         if(gameProperties.score / 10 == level) {
-//             gameProperties.level++;
-//             gameProperties.pedSpeed -= (100 * gameProperties.widthScale)
-//         }
-//     }
-// }

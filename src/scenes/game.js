@@ -59,25 +59,14 @@ export class gameScene extends Phaser.Scene {
             newped.anims.play(`walking${randomPedNum}`);
             newped.setVelocityX(
                 Phaser.Math.Between(
-                    (gameProperties.pedSpeed - 10), 
-                    (gameProperties.pedSpeed + 10)
+                    (gameProperties.pedSpeed - 25), 
+                    (gameProperties.pedSpeed + 50)
                 )
             );
 
             return newped;
         }
 
-        gameProperties.activatePed = () => {
-            gameProperties.activePeds.unshift(
-                gameProperties.addRandomPed()
-            );
-        }
-        
-        gameProperties.gameObjects.player.setVisible(true);
-        gameProperties.addOverlaps();
-    }
-
-    create() {
         //let player pause
         gameProperties.buttons.pauseButton.on("pointerdown", () => {
             this.scene.pause();
@@ -92,16 +81,28 @@ export class gameScene extends Phaser.Scene {
             fill: '#FFFFFF'
         });
         
+        gameProperties.addOverlaps();
+    }
+
+    create() {
         //add first pedestrian to the scene and puts them in the active peds array
-        gameProperties.activatePed();
+        gameProperties.activePeds.unshift(
+            gameProperties.addRandomPed()
+        );
+
+        gameProperties.gameObjects.player.setVisible(true);
+        gameProperties.gameObjects.player.isInMotion = true;
     }
 
     update() {
         //scroll the parallax background while player in motion
         if (gameProperties.gameObjects.player.isDown != true) {
-            gameProperties.background.bg.tilePositionX += 0.5;
-            gameProperties.background.mg.tilePositionX += 2.5;
-            gameProperties.background.fg.tilePositionX += 3.75;
+            //stops the bg from scrolling during game over screen
+            if(gameProperties.gameObjects.player.isInMotion) {
+                gameProperties.background.bg.tilePositionX += 0.5;
+                gameProperties.background.mg.tilePositionX += 2.5;
+                gameProperties.background.fg.tilePositionX += 3.75;
+            }
 
             if (gameProperties.gameObjects.player.body.touching.down === false) {
                 gameProperties.gameObjects.player.anims.play('falling');
@@ -132,9 +133,9 @@ export class gameScene extends Phaser.Scene {
 function pedSneeze(ped) {
     const thisPedSpeed = ped.body.velocity.x || 0;
     const pedPositionX = ped.x + (ped.displayOriginX / 2);
-    // if(!gameProperties.muted) {
-    //     sneezeSFX.play();
-    // }
+    if(!gameProperties.muted) {
+        //sneezeSFX.play();
+    }
     
     if (ped.masked == null) {
         cloud = clouds.create(pedPositionX, ped.y + 75, 'cloud');
@@ -152,6 +153,7 @@ function pedSneeze(ped) {
         cloud.setVelocityX(thisPedSpeed);
         cloud.anims.play('cloudIdle');
     }
+    ped.sneezed = true;
 }
 
 function pedCough(ped) {
@@ -177,4 +179,5 @@ function pedCough(ped) {
         cloud.setVelocityX(thisPedSpeed);
         cloud.anims.play('cloudIdle');
     }
+    ped.coughed = true;
 }
