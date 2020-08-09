@@ -337,8 +337,8 @@ export class preloadScene extends Phaser.Scene {
             level: 1,
             jumpVelocity: -1.1 * userDevice.height,
             activePeds: [],
-            pedSpeed: -350 * userDevice.widthScale,
-            maxPedSpeed: -500 * userDevice.widthScale, //more like minimum, but right-to-left
+            pedSpeed: -400 * userDevice.widthScale,
+            maxPedSpeed: -550 * userDevice.widthScale, //more like minimum, but right-to-left
             background: {
                 //populated below using methods in this object
             },
@@ -383,7 +383,7 @@ export class preloadScene extends Phaser.Scene {
 
         //invisible to the player, but adds points when touched by ped
         gameProperties.gameObjects.scoreZone = this.physics.add.sprite(
-            (userDevice.width * 0.05), 
+            (userDevice.width * 0.1), 
             (userDevice.height * 0.7), 
             'scoreZone'
         ).setScale(userDevice.heightScale);
@@ -409,20 +409,20 @@ export class preloadScene extends Phaser.Scene {
 
         //invisible to the player; peds may cough/sneeze at these locations
         gameProperties.gameObjects.coughZone1 = this.physics.add.sprite(
-            (userDevice.width * 0.4), 
+            (userDevice.width * 0.5), 
             (userDevice.height * 0.7), 
             'coughZone'
         ).setScale(userDevice.heightScale);
 
         gameProperties.gameObjects.coughZone2 = this.physics.add.sprite(
-            (userDevice.width * 0.6), 
+            (userDevice.width * 0.7), 
             (userDevice.height * 0.7), 
             'coughZone'
         ).setScale(userDevice.heightScale);
 
         //player, peds, and obstacles
         gameProperties.gameObjects.player = this.physics.add.sprite(
-            (userDevice.width * 0.1), 
+            gameProperties.gameObjects.scoreZone.x + 50,
             gameProperties.gameObjects.scoreZone.y,
             'player'
         ).setCollideWorldBounds(true)
