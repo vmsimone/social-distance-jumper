@@ -2,11 +2,6 @@ import { SCENES } from "../sceneHandler.js";
 
 let gameProperties;
 
-let level;
-
-let clouds;
-let cloud;
-
 //functions below class
 export class gameScene extends Phaser.Scene {
     constructor() {
@@ -67,11 +62,7 @@ export class gameScene extends Phaser.Scene {
             return newped;
         }
 
-        //let player pause
-        gameProperties.buttons.pauseButton.on("pointerdown", () => {
-            this.scene.pause();
-            this.scene.launch(SCENES.PAUSED);
-        });
+        gameProperties.buttons.pauseButton.setVisible(true);
 
         //player can view score in upper-left corner
         gameProperties.scoreText = gameProperties.addText(this, {

@@ -236,7 +236,10 @@ export class preloadScene extends Phaser.Scene {
             coughOrSneeze2: () => {
                 const frontMostPed = gameProperties.activePeds[gameProperties.activePeds.length - 1];
 
-                if(frontMostPed.zone1Touched == undefined && frontMostPed.zone2Touched == undefined) {
+                if(frontMostPed.sneezed != true
+                    && frontMostPed.coughed != true
+                    && frontMostPed.zone2Touched == undefined
+                ) {
                     const coinFlip = Phaser.Math.Between(1, 100);
                     if(coinFlip <= 25) {
                         gameProperties.cough(frontMostPed);
@@ -544,22 +547,28 @@ export class preloadScene extends Phaser.Scene {
         //pause
         gameProperties.buttons.pauseButton = gameProperties.addButton(this, {
             name: "pause",
-            widthRatio: 0.9,
+            widthRatio: 0.8,
             heightRatio: 0.05
         });
+        gameProperties.buttons.pauseButton.on("pointerdown", () => {
+            gameProperties.gameObjects.player.isInMotion = false;
+            this.scene.pause();
+            this.scene.launch(SCENES.PAUSED, gameProperties);
+        });
+        gameProperties.buttons.pauseButton.setVisible(false);
 
         //unmute
         //this will be hidden at first
         gameProperties.buttons.unMuteButton = gameProperties.addButton(this, {
             name: "soundOff",
-            widthRatio: 0.8,
+            widthRatio: 0.9,
             heightRatio: 0.05
         });
 
         //mute
         gameProperties.buttons.muteButton = gameProperties.addButton(this, {
             name: "soundOn",
-            widthRatio: 0.8,
+            widthRatio: 0.9,
             heightRatio: 0.05
         });
         

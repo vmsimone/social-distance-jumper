@@ -1,6 +1,6 @@
 import { SCENES } from "../sceneHandler.js";
 
-let screenDarken;
+let gameProperties;
 
 export class pausedScene extends Phaser.Scene {
     constructor() {
@@ -9,20 +9,19 @@ export class pausedScene extends Phaser.Scene {
         });
     }
 
-    init() {
-        console.log('game paused');
+    init(sceneData) {
+        gameProperties = sceneData;
     }
 
     create() {
-        //images all scaled to fit 1080 x 1920
-        const gameHeight = this.game.renderer.height;
-        const gameHeightScale = gameHeight / 1920;
-        
         this.input.once('pointerdown', () => {
-            screenDarken.destroy();
-            this.scene.resume(SCENES.GAME);
+            gameProperties.background.screenDarken.setVisible(false);
+            gameProperties.gameObjects.player.isInMotion = true;
+            
+            //all our assets are in the preload, so....
+            this.scene.resume(SCENES.PRELOAD);
         }, this);
 
-        screenDarken = this.add.image(0, 0, "screenDarken").setDepth(1).setOrigin(0).setScale(gameHeightScale);
+        gameProperties.background.screenDarken.setVisible(true);
     }
 };

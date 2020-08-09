@@ -10,12 +10,12 @@ export class gameOverScene extends Phaser.Scene {
     }
 
     init(sceneData) {
-        console.log('GG');
         gameProperties = sceneData;
     }
 
     preload() {
         updateHighscore();
+        gameProperties.buttons.pauseButton.setVisible(false);
         gameProperties.gameObjects.player.setVisible(false);
         gameProperties.scoreText.destroy();
 
