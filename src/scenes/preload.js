@@ -335,7 +335,8 @@ export class preloadScene extends Phaser.Scene {
             score: 0,
             highScore: 0,
             level: 1,
-            jumpVelocity: -1.1 * userDevice.height,
+            jumpVelocity: -0.8 * userDevice.height,
+            maxJump: userDevice.height * 0.8,
             activePeds: [],
             pedSpeed: -400 * userDevice.widthScale,
             maxPedSpeed: -550 * userDevice.widthScale, //more like minimum, but right-to-left
@@ -466,15 +467,8 @@ export class preloadScene extends Phaser.Scene {
 
         gameProperties.animations.jumping = this.anims.create({
             key: 'jumping',
-            frames: this.anims.generateFrameNumbers('player', { start: 9, end: 12 }),
-            frameRate: 20
-        });
-
-        gameProperties.animations.falling = this.anims.create({
-            key: 'falling',
-            frames: this.anims.generateFrameNumbers('player', { start: 13, end: 15 }),
-            frameRate: 5,
-            repeat: 1
+            frames: this.anims.generateFrameNumbers('player', { start: 11, end: 14 }),
+            frameRate: 16
         });
 
         gameProperties.animations.cloudIdle = this.anims.create({

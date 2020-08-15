@@ -32,6 +32,14 @@ export class gameScene extends Phaser.Scene {
                     zone.y, 
                     randomPed
                 ).setScale(gameProperties.spriteScale);
+            // for bigger screens with bigger sprites
+            } else if(gameProperties.spriteScale < 0.5) {
+                newped = gameProperties.gameObjects.peds.create(
+                    zone.x + (gameProperties.spriteScale * 384), 
+                    zone.y + (gameProperties.spriteScale * 384), 
+                    randomPed
+                ).setScale(gameProperties.spriteScale);
+            // for smaller screens we have to do this or they'll appear below the ground
             } else {
                 //set up our new ped's properties
                 newped = gameProperties.gameObjects.peds.create(
@@ -97,22 +105,38 @@ export class gameScene extends Phaser.Scene {
                 gameProperties.background.fg.tilePositionX += 3.75;
             }
 
+            //play will start to fall while in midair if the let go of the pointer
             if (gameProperties.gameObjects.player.body.touching.down === false) {
-                gameProperties.gameObjects.player.anims.play('falling');
+                //when the player reaches the peak of their jump, they fall
+                if(
+                    gameProperties.gameObjects.player.y <= gameProperties.maxJump
+                    ||
+                    (gameProperties.pointer.isDown == false && gameProperties.cursors.space.isDown == false)
+                ) {
+                    gameProperties.gameObjects.player.falling = true;
+                    //this never plays??
+                    gameProperties.gameObjects.player.anims.playReverse('jumping');
+                }
             } else {
                 gameProperties.gameObjects.player.anims.play('running', true);
+                gameProperties.gameObjects.player.falling = false;
             }
     
+            //jump using spacebar or clicking/tapping while not falling
             if (
-                (gameProperties.cursors.space.isDown || gameProperties.pointer.isDown) 
-                && 
-                gameProperties.gameObjects.player.body.touching.down
-            ) {
+                    (gameProperties.pointer.isDown || gameProperties.cursors.space.isDown) 
+                    && 
+                    gameProperties.gameObjects.player.falling == false
+                ) {
+                //jumpSFX won't play is not in motion
                 if(!gameProperties.muted && gameProperties.gameObjects.player.isInMotion == true) {
                     gameProperties.sounds.jumpSFX.play();
                 }
+                //the jump annimation plays even when this is hidden??
+                //gameProperties.gameObjects.player.anims.play('jumping');
                 gameProperties.gameObjects.player.setVelocityY(gameProperties.jumpVelocity);
             }
+        //game stops when player is touched by ped or obstacle
         } else {
             gameProperties.gameObjects.player.anims.play('gg', true);
             let animOver = gameProperties.gameObjects.player.anims.getProgress();
