@@ -187,7 +187,7 @@ export class preloadScene extends Phaser.Scene {
                             'cloud'
                         ).setScale(userDevice.heightScale).setVelocityX(thisPedSpeed - 75);
 
-                        cloud.body.setSize(150, 100, true);
+                        cloud.body.setSize(120, 100, true);
                         cloud.anims.play('cloudIdle');
                     } else {
                         let cloud = gameProperties.gameObjects.clouds.create(
