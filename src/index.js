@@ -18,7 +18,7 @@ let game = new Phaser.Game({
   //max height is 1293 + 150 for ad space
   height: returnLowest(
     screenBuffer(window.innerHeight), 
-    ((1293 + 150 * window.devicePixelRatio) * window.devicePixelRatio)
+    (1293 + (50 * window.devicePixelRatio))
   ),
   physics: {
       default: 'arcade',
@@ -48,5 +48,5 @@ function returnLowest(a, b) {
 }
 
 function screenBuffer(windowSize) {
-  return (windowSize * 0.8) + (150 * window.devicePixelRatio)
+  return (windowSize * 0.9) + (50 * window.devicePixelRatio)
 }
