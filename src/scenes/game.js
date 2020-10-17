@@ -44,7 +44,7 @@ export class gameScene extends Phaser.Scene {
                 //set up our new ped's properties
                 newped = gameProperties.gameObjects.peds.create(
                     zone.x + (gameProperties.spriteScale * 200), 
-                    zone.y + (gameProperties.spriteScale * 200), 
+                    zone.y + (gameProperties.spriteScale * 300), 
                     randomPed
                 ).setScale(gameProperties.spriteScale);
             }
