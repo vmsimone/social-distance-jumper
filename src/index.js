@@ -48,5 +48,5 @@ function returnLowest(a, b) {
 }
 
 function screenBuffer(windowSize) {
-  return (windowSize * 0.95)
+  return (windowSize * 0.8) + (150 * window.devicePixelRatio)
 }
