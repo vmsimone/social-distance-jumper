@@ -7,6 +7,7 @@
     <style>
        @font-face { font-family: "dogicapixel"; src: url('./src/assets/font/dogicapixel.otf'); }
        body { background: #111155; text-align: center; }
+       a { max-width: 727; position: static; margin: 0 auto; margin-bottom: 15px; display:block; color: yellow }
     </style>
 
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
@@ -16,14 +17,30 @@
   <body>
     <!-- activates the font -->
     <div style="font-family:dogicapixel; position:absolute; left:-1000px; visibility:hidden;">.</div>
+    <!-- Phaser links -->
     <script src="phaser.js"></script>
     <script src="phaser.min.js"></script>
     <script src="dist/bundle.min.js"></script>
+
     <!-- infolinks ads -->
     <script type="text/javascript">
       var infolinks_pid = 3289088;
       var infolinks_wsid = 0;
     </script>
     <script type="text/javascript" src="//resources.infolinks.com/js/infolinks_main.js"></script>
+    
+    <!-- play link and contact us -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript">
+      function addFooter() {
+        $('body').append(`
+          <footer>
+            <a href='https://play.google.com/store/apps/details?id=io.sdj.android&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png'/></a>
+            <a style="font-family:dogicapixel; font-size:5vw;" href="mailto:info@sdj.io">Contact Us</a>
+          </footer>
+        `);
+      }
+      $(addFooter);
+    </script>
   </body>
 </html>
