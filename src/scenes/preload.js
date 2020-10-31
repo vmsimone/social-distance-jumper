@@ -303,7 +303,7 @@ export class preloadScene extends Phaser.Scene {
                 gameProperties.gameObjects.player.isInMotion = false;
     
                 if(!gameProperties.muted) {
-                    gameProperties.sounds.gameOverSFX.play();
+                    gameProperties.sounds.gameOverSFX.play({volume: 0.3});
                 }
             },
             addOverlaps: () => {

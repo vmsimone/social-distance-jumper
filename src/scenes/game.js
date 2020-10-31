@@ -36,7 +36,7 @@ export class gameScene extends Phaser.Scene {
             } else if(gameProperties.spriteScale < 0.5) {
                 newped = gameProperties.gameObjects.peds.create(
                     zone.x + (gameProperties.spriteScale * 384), 
-                    zone.y + (gameProperties.spriteScale * 384), 
+                    zone.y + (gameProperties.spriteScale * 384), //extra numbers here to avoid "flying pedestrians"
                     randomPed
                 ).setScale(gameProperties.spriteScale);
             // for smaller screens we have to do this or they'll appear below the ground
@@ -44,7 +44,7 @@ export class gameScene extends Phaser.Scene {
                 //set up our new ped's properties
                 newped = gameProperties.gameObjects.peds.create(
                     zone.x + (gameProperties.spriteScale * 200), 
-                    zone.y + (gameProperties.spriteScale * 300), 
+                    zone.y + (gameProperties.spriteScale * 100), //extra numbers here to avoid "flying pedestrians"
                     randomPed
                 ).setScale(gameProperties.spriteScale);
             }
